@@ -8,7 +8,7 @@ public class Test extends JFrame {
     }
 
     public Test() {
-        final int ROWS = 10, COLUMNS = 10;
+        final int ROWS = 10, COLUMNS = 3;
         // initialize the window
         setTitle("Scale e Serpenti");
         setSize(600, 600);

@@ -1,5 +1,6 @@
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        StartGame startGameFrame = new StartGame();
+        startGameFrame.setVisible(true);
     }
 }
