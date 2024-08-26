@@ -1,9 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Properties;
 
 public class Game {
-    // record of the primary rules
     private record PrimaryRulesSettings(
         int nPlayers,
         int nRows,
@@ -11,8 +13,7 @@ public class Game {
         int nDices,
         int nLadders,
         int nSnakes
-    ) {}
-    // record of the special rules
+    ) {} // record of the primary rules
     private record SpecialRulesSettings(
             boolean autoAdvance,
             boolean singleDice,
@@ -22,7 +23,7 @@ public class Game {
             boolean rollAgain,
             boolean addCards,
             boolean dontStopCard
-    ) {}
+    ) {} // record of the special rules
     // Since the Special Rules depend on the values of the Primary Rules,
     // the user must first set the Primary Rules
     // Example: The "singleDice" special rule can't be enabled
@@ -30,19 +31,61 @@ public class Game {
     private PrimaryRulesSettings primaryRules;
     private SpecialRulesSettings specialRules;
 
-    private JFrame configGame;
+    private JFrame configFrame;
     private JFrame primaryRulesFrame;
     private JFrame specialRulesFrame;
 
     public Game() {
-        primaryRulesFrame = new PrimaryRulesFrame();
-        primaryRulesFrame.setVisible(true);
+        configFrame = new ConfigFrame();
+        configFrame.setVisible(true);
     }
 
-    private class ConfigGame extends JFrame {
-        public ConfigGame() {
-
+    private class ConfigFrame extends JFrame {
+        public ConfigFrame() {
+            // Set the JFrame
+            setTitle("Configure the Snakes And Ladders game");
+            setSize(300, 300);
+            setLocationRelativeTo(null); // sets the location of this frame at the center of the screen
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            setLayout(new BorderLayout());
+            // Buttons panel
+            JPanel panel = new JPanel(new GridLayout(3, 1, 10, 10));
+            // Set buttons
+            JButton setButton = new JButton("Start a new configuration");
+            setButton.addActionListener(e -> goToPrimaryRulesFrame()); // Add action listener to button
+            JButton loadButton = new JButton("Load an old configuration");
+            loadButton.addActionListener(e -> loadConfig());
+            JButton exitButton = new JButton("Exit");
+            exitButton.addActionListener(e -> this.dispose());
+            // Add buttons to panel
+            panel.add(setButton);
+            panel.add(loadButton);
+            panel.add(exitButton);
         }
+
+        private void goToPrimaryRulesFrame() {
+            primaryRulesFrame = new PrimaryRulesFrame();
+            primaryRulesFrame.setVisible(true);
+            this.setVisible(false);
+        }
+
+        private void loadConfig() {
+            Properties p = new Properties();
+
+            JFileChooser fileChooser = new JFileChooser();
+            if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                try (FileInputStream inputStream = new FileInputStream(file)) {
+                    p.load(inputStream);
+
+
+                    JOptionPane.showMessageDialog(this, "Configuration loaded successfully.", "Configuration loaded", JOptionPane.INFORMATION_MESSAGE);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "Error loading file.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+
     }
 
     private class PrimaryRulesFrame extends JFrame {
@@ -56,8 +99,9 @@ public class Game {
 
         public PrimaryRulesFrame() {
             // Set the JFrame
-            setTitle("Configure the Snakes And Ladders game");
+            setTitle("Configure the Primary Rules");
             setSize(600, 600);
+            setLocationRelativeTo(null); // sets the location of this frame at the center of the screen
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setLayout(new BorderLayout());
             // Fields panel
@@ -70,6 +114,9 @@ public class Game {
             snakesField = new JTextField("7");
             diceComboBox = new JComboBox<>(new String[] {"1", "2"});
             JButton nextButton = new JButton("Next");
+            nextButton.addActionListener(e -> nextFrame());
+            JButton backButton = new JButton("Back");
+            backButton.addActionListener(e -> previousFrame());
             // Add fields to panel
             panel.add(new JLabel("Number of players:"));
             panel.add(playersField);
@@ -83,12 +130,10 @@ public class Game {
             panel.add(snakesField);
             panel.add(new JLabel("Number of dices:"));
             panel.add(diceComboBox);
-            panel.add(new JLabel()); // placeholder
+            panel.add(backButton);
             panel.add(nextButton);
             // Add panel to frame
             add(panel);
-            // Add action listener to button
-            nextButton.addActionListener(e -> nextFrame());
         }
 
         private void nextFrame() {
@@ -117,6 +162,12 @@ public class Game {
                 JOptionPane.showMessageDialog(this, "The typed values aren't valid numbers.", "Values Error", JOptionPane.ERROR_MESSAGE);
             }
         }
+
+        private void previousFrame() {
+            configFrame.setVisible(true);
+            this.dispose();
+        }
+
     }
 
     private class SpecialRulesFrame extends JFrame {
@@ -134,6 +185,7 @@ public class Game {
             // Set the JFrame
             setTitle("Select special rules");
             setSize(600, 600);
+            setLocationRelativeTo(null); // sets the location of this frame at the center of the screen
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setLayout(new BorderLayout());
             // Fields panel
@@ -153,7 +205,7 @@ public class Game {
             dontStopCardCheckBox.setSelected(false);
             addCardsCheckBox.addActionListener(e -> manageButtonDontStopCard());
             JButton nextButton = new JButton("Next");
-            nextButton.addActionListener(e -> StartGame()); // Add action listener to button
+            nextButton.addActionListener(e -> nextFrame()); // Add action listener to button
             JButton backButton = new JButton("Back");
             backButton.addActionListener(e -> previousFrame());
             // Add fields to panel
@@ -181,7 +233,7 @@ public class Game {
 
         }
 
-        private void StartGame() {
+        private void nextFrame() {
             specialRules = new SpecialRulesSettings(
                     autoAdvanceCheckBox.isSelected(),
                     singleDiceCheckBox.isSelected(),
@@ -200,5 +252,7 @@ public class Game {
             this.dispose();
         }
     }
+
+
 
 }
