@@ -24,7 +24,7 @@ public class Test extends JFrame {
 
         // add a button to roll the dice (Only in manual mode)
         JButton rollButton = new JButton("Roll Dice");
-        rollButton.addActionListener(_ -> rollDice());
+        rollButton.addActionListener(e -> rollDice());
         add(rollButton, BorderLayout.SOUTH);
 
     }
