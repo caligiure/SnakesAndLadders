@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Configuring GameBoard basic structure">
+    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Visualizing players on the board">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GameBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameBoard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GameConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Test.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -134,7 +132,7 @@
       <workItem from="1723627915392" duration="596000" />
       <workItem from="1724667995499" duration="91000" />
       <workItem from="1724668105867" duration="15005000" />
-      <workItem from="1724741147674" duration="27251000" />
+      <workItem from="1724741147674" duration="29707000" />
     </task>
     <task id="LOCAL-00001" summary="The board gridLayout is working!">
       <option name="closed" value="true" />
@@ -208,7 +206,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724755465750</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Visualizing players on the board">
+      <option name="closed" value="true" />
+      <created>1724779909951</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1724779909951</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -225,7 +231,8 @@
     <MESSAGE value="The class GameConfiguration is complete" />
     <MESSAGE value="Made PrimaryRulesRecord and SpecialRulesRecord outer classes" />
     <MESSAGE value="Configuring GameBoard basic structure" />
-    <option name="LAST_COMMIT_MESSAGE" value="Configuring GameBoard basic structure" />
+    <MESSAGE value="Visualizing players on the board" />
+    <option name="LAST_COMMIT_MESSAGE" value="Visualizing players on the board" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

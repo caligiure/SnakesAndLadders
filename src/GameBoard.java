@@ -10,7 +10,8 @@ public class GameBoard {
     private JLabel[][] cells;
     // Players
     private String[] playersName;
-    private int[] playersPosition;  // Posizioni correnti dei giocatori
+    private int[] playersPosition;
+    private int currentTurn; // indicates the number of the player who must roll the dices
 
     public GameBoard(PrimaryRulesRecord primaryRules, SpecialRulesRecord specialRules) {
         this.primaryRules = primaryRules;
@@ -37,7 +38,16 @@ public class GameBoard {
             // add the board component to the container
             add(boardPanel, BorderLayout.CENTER);
 
-            // create a panel which will hold all the buttons
+            // creates a panel which will hold all the buttons
+            JPanel buttonsPanel = getButtonsPanel();
+            // add the buttons panel to the frame
+            add(buttonsPanel, BorderLayout.SOUTH);
+
+            // add the players to the board
+            initializePlayers();
+        }
+
+        private JPanel getButtonsPanel() {
             JPanel buttonsPanel = new JPanel(new GridLayout(1, 2, 10, 10));
             // add exit button
             JButton exitButton = new JButton("Exit");
@@ -46,14 +56,10 @@ public class GameBoard {
             // add a button to roll the dice (only if autoAdvance is off)
             if( !specialRules.autoAdvance() ) {
                 JButton rollButton = new JButton("Roll Dice");
-                rollButton.addActionListener(e -> rollDice());
+                rollButton.addActionListener(e -> nextTurn());
                 buttonsPanel.add(rollButton);
             }
-            // add the buttons panel to the frame
-            add(buttonsPanel, BorderLayout.SOUTH);
-
-            // add the players to the board
-            initializePlayers();
+            return buttonsPanel;
         }
 
         private void exitGame() {
@@ -148,9 +154,28 @@ public class GameBoard {
             cell.setText(newText.toString());
         }
 
-        private static void rollDice(){
-
+        private void nextTurn() { // updates the turn and makes a player roll the dice
+            int currentPlayer = currentTurn;
+            currentTurn = (currentTurn+1)%primaryRules.nPlayers();
+            rollDice(currentPlayer);
         }
+
+        private void rollDice(int playerIndex){
+            // roll the dices
+            int diceSum = 0; // sums the total of nDices
+            for (int i = 0; i < primaryRules.nDices(); i++) {
+                diceSum += (int) (Math.random()*7);
+            }
+            // calculate the new position
+            int currentPosition = playersPosition[playerIndex];
+            int newPosition = currentPosition + diceSum;
+            int finalPosition = primaryRules.nRows()*primaryRules.nCols();
+            if (newPosition > finalPosition) { // manage overshoot
+                newPosition = finalPosition - (newPosition - finalPosition);
+            }
+            updatePlayerPosition(playerIndex, newPosition);
+        }
+
     }
 
 }
