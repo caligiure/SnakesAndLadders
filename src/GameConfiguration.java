@@ -259,9 +259,11 @@ public class GameConfiguration {
                     dontStopCardCheckBox.isSelected()
             );
 
-            //this.setVisible(false);
-            //primaryRulesFrame.dispose();
-            //configFrame.dispose();
+            this.setVisible(false);
+            new GameBoard(primaryRules, specialRules); // creates the board
+            configFrame.dispose();
+            primaryRulesFrame.dispose();
+            this.dispose();
         }
 
         private void previousFrame() {

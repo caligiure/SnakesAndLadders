@@ -4,9 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="The class GameConfiguration is complete">
+    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Made PrimaryRulesRecord and SpecialRulesRecord outer classes">
+      <change afterPath="$PROJECT_DIR$/src/GameBoard.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Board.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GameConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/PrimaryRulesRecord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PrimaryRulesRecord.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SpecialRulesRecord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SpecialRulesRecord.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -70,6 +75,11 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveInnerDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
+  </component>
   <component name="RunManager" selected="Application.Main">
     <configuration name="FirstConfig" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="FirstConfig" />
@@ -127,7 +137,7 @@
       <workItem from="1723627915392" duration="596000" />
       <workItem from="1724667995499" duration="91000" />
       <workItem from="1724668105867" duration="15005000" />
-      <workItem from="1724741147674" duration="8308000" />
+      <workItem from="1724741147674" duration="10375000" />
     </task>
     <task id="LOCAL-00001" summary="The board gridLayout is working!">
       <option name="closed" value="true" />
@@ -185,7 +195,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724752462380</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Made PrimaryRulesRecord and SpecialRulesRecord outer classes">
+      <option name="closed" value="true" />
+      <created>1724753397170</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1724753397170</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -200,7 +218,8 @@
     <MESSAGE value="First and Second configuration Frames done" />
     <MESSAGE value="Work in progress in configGame" />
     <MESSAGE value="The class GameConfiguration is complete" />
-    <option name="LAST_COMMIT_MESSAGE" value="The class GameConfiguration is complete" />
+    <MESSAGE value="Made PrimaryRulesRecord and SpecialRulesRecord outer classes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Made PrimaryRulesRecord and SpecialRulesRecord outer classes" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

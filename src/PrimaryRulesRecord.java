@@ -1,6 +1,6 @@
 import java.io.Serializable;
 
-record PrimaryRulesRecord(
+public record PrimaryRulesRecord(
         int nPlayers,
         int nRows,
         int nCols,

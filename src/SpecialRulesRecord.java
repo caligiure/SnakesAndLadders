@@ -1,6 +1,6 @@
 import java.io.Serializable;
 
-record SpecialRulesRecord(
+public record SpecialRulesRecord(
         boolean autoAdvance,
         boolean singleDice,
         boolean doubleSix,
