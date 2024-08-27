@@ -1,41 +1,38 @@
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
+import java.io.*;
 
-public class Game {
-    private record PrimaryRulesSettings(
+public class GameConfiguration {
+    private record PrimaryRulesRecord(
         int nPlayers,
         int nRows,
         int nCols,
         int nDices,
         int nLadders,
         int nSnakes
-    ) {} // record of the primary rules
-    private record SpecialRulesSettings(
+    ) implements Serializable {}
+    private record SpecialRulesRecord(
             boolean autoAdvance,
             boolean singleDice,
             boolean doubleSix,
             boolean stopTiles,
-            boolean moveAgain,
-            boolean rollAgain,
+            boolean moveAgainTiles,
+            boolean rollAgainTiles,
             boolean addCards,
             boolean dontStopCard
-    ) {} // record of the special rules
+    ) implements Serializable {}
     // Since the Special Rules depend on the values of the Primary Rules,
     // the user must first set the Primary Rules
     // Example: The "singleDice" special rule can't be enabled
-    // unless the "nDices" primary rules is set on a number greater than 1
-    private PrimaryRulesSettings primaryRules;
-    private SpecialRulesSettings specialRules;
+    // unless the "nDices" primary rule is set on a number greater than 1
+    private PrimaryRulesRecord primaryRules;
+    private SpecialRulesRecord specialRules;
 
     private JFrame configFrame;
     private JFrame primaryRulesFrame;
     private JFrame specialRulesFrame;
 
-    public Game() {
+    public GameConfiguration() {
         configFrame = new ConfigFrame();
         configFrame.setVisible(true);
     }
@@ -52,7 +49,7 @@ public class Game {
             JPanel panel = new JPanel(new GridLayout(3, 1, 10, 10));
             // Set buttons
             JButton setButton = new JButton("Start a new configuration");
-            setButton.addActionListener(e -> goToPrimaryRulesFrame()); // Add action listener to button
+            setButton.addActionListener(e -> newConfig()); // Add action listener to button
             JButton loadButton = new JButton("Load an old configuration");
             loadButton.addActionListener(e -> loadConfig());
             JButton exitButton = new JButton("Exit");
@@ -61,31 +58,37 @@ public class Game {
             panel.add(setButton);
             panel.add(loadButton);
             panel.add(exitButton);
+            add(panel);
         }
 
-        private void goToPrimaryRulesFrame() {
+        private void newConfig() {
+            // default values
+            primaryRules = new PrimaryRulesRecord(2, 10, 10, 2, 7, 7);
+            specialRules = new SpecialRulesRecord(false, true, true, false, false, false, false,false);
             primaryRulesFrame = new PrimaryRulesFrame();
             primaryRulesFrame.setVisible(true);
-            this.setVisible(false);
+            this.setVisible(false); // dispose later
         }
 
         private void loadConfig() {
-            Properties p = new Properties();
-
             JFileChooser fileChooser = new JFileChooser();
             if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
                 File file = fileChooser.getSelectedFile();
-                try (FileInputStream inputStream = new FileInputStream(file)) {
-                    p.load(inputStream);
-
-
+                try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file))) {
+                    // Load the records from the file
+                    PrimaryRulesRecord pR = (PrimaryRulesRecord) inputStream.readObject();
+                    SpecialRulesRecord sR = (SpecialRulesRecord) inputStream.readObject();
+                    primaryRules = pR;
+                    specialRules = sR;
                     JOptionPane.showMessageDialog(this, "Configuration loaded successfully.", "Configuration loaded", JOptionPane.INFORMATION_MESSAGE);
-                } catch (IOException ex) {
+                    primaryRulesFrame = new PrimaryRulesFrame();
+                    primaryRulesFrame.setVisible(true);
+                    this.setVisible(false); // dispose later
+                } catch (ClassNotFoundException | IOException ex) {
                     JOptionPane.showMessageDialog(this, "Error loading file.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
-
     }
 
     private class PrimaryRulesFrame extends JFrame {
@@ -107,12 +110,13 @@ public class Game {
             // Fields panel
             JPanel panel = new JPanel(new GridLayout(7, 2, 10, 10));
             // Primary fields
-            playersField = new JTextField("2");
-            rowsField = new JTextField("10");
-            columnsField = new JTextField("10");
-            laddersField = new JTextField("7");
-            snakesField = new JTextField("7");
+            playersField = new JTextField(""+primaryRules.nPlayers);
+            rowsField = new JTextField(""+primaryRules.nRows);
+            columnsField = new JTextField(""+primaryRules.nCols);
+            laddersField = new JTextField(""+primaryRules.nLadders);
+            snakesField = new JTextField(""+primaryRules.nSnakes);
             diceComboBox = new JComboBox<>(new String[] {"1", "2"});
+            diceComboBox.setSelectedIndex(primaryRules.nDices - 1);
             JButton nextButton = new JButton("Next");
             nextButton.addActionListener(e -> nextFrame());
             JButton backButton = new JButton("Back");
@@ -151,12 +155,12 @@ public class Game {
                 else if(numRows <= 0 && numCols <= 0)
                     JOptionPane.showMessageDialog(this, "Rows and Columns values cannot both be zero.", "Invalid Rows and Columns", JOptionPane.ERROR_MESSAGE);
                 else {
-                    // Set the values
-                    primaryRules = new PrimaryRulesSettings(numPlayers, numRows, numCols, numDices, numLadders, numSnakes);
+                    // Save the values in the primaryRules record
+                    primaryRules = new PrimaryRulesRecord(numPlayers, numRows, numCols, numDices, numLadders, numSnakes);
                     // next frame
                     specialRulesFrame = new SpecialRulesFrame();
                     specialRulesFrame.setVisible(true);
-                    this.setVisible(false);
+                    this.setVisible(false); // dispose later
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "The typed values aren't valid numbers.", "Values Error", JOptionPane.ERROR_MESSAGE);
@@ -189,23 +193,29 @@ public class Game {
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setLayout(new BorderLayout());
             // Fields panel
-            JPanel panel = new JPanel(new GridLayout(10, 1, 10, 10));
+            JPanel panel = new JPanel(new GridLayout(11, 1, 10, 10));
             // Rules fields
-            autoAdvanceCheckBox = new JCheckBox("Automatically roll the dices and advance");
-            singleDiceCheckBox = new JCheckBox("Use a single dice in the last 6 tiles");
-            if( primaryRules.nDices<2 )
+            autoAdvanceCheckBox = new JCheckBox("Automatically roll the dices and advance", specialRules.autoAdvance);
+            singleDiceCheckBox = new JCheckBox("Use a single dice in the last 6 tiles", specialRules.singleDice);
+            if( primaryRules.nDices<2 ) {
                 singleDiceCheckBox.setEnabled(false);
-            doubleSixCheckBox = new JCheckBox("Double Roll if you get Double Six");
-            stopTilesCheckBox = new JCheckBox("Add Stopping tiles: bench stops you for 1 turn, tavern stops you for 3 turns");
-            moveAgainCheckBox = new JCheckBox("Add special tiles that let you move again without rolling the dice");
-            rollAgainCheckBox = new JCheckBox("Add special tiles that let you roll the dice again");
-            addCardsCheckBox = new JCheckBox("Add special tiles that let you draw a card");
-            dontStopCardCheckBox = new JCheckBox("Add a special card that you can keep to avoid getting stopped");
-            dontStopCardCheckBox.setEnabled(false);
-            dontStopCardCheckBox.setSelected(false);
+                singleDiceCheckBox.setSelected(false);
+            }
+            doubleSixCheckBox = new JCheckBox("Double Roll if you get Double Six", specialRules.doubleSix);
+            stopTilesCheckBox = new JCheckBox("Add Stopping tiles: bench stops you for 1 turn, tavern stops you for 3 turns", specialRules.stopTiles);
+            moveAgainCheckBox = new JCheckBox("Add special tiles that let you move again without rolling the dice", specialRules.moveAgainTiles);
+            rollAgainCheckBox = new JCheckBox("Add special tiles that let you roll the dice again", specialRules.rollAgainTiles);
+            addCardsCheckBox = new JCheckBox("Add special tiles that let you draw a card", specialRules.addCards);
+            dontStopCardCheckBox = new JCheckBox("Add a special card that you can keep to avoid getting stopped", specialRules.dontStopCard);
+            if( !addCardsCheckBox.isSelected() ) {
+                dontStopCardCheckBox.setEnabled(false);
+                dontStopCardCheckBox.setSelected(false);
+            }
             addCardsCheckBox.addActionListener(e -> manageButtonDontStopCard());
-            JButton nextButton = new JButton("Next");
-            nextButton.addActionListener(e -> nextFrame()); // Add action listener to button
+            JButton startButton = new JButton("Start game");
+            startButton.addActionListener(e -> startGame()); // Add action listener to button
+            JButton saveButton = new JButton("Save configuration");
+            saveButton.addActionListener(e -> saveConfig()); // Add action listener to button
             JButton backButton = new JButton("Back");
             backButton.addActionListener(e -> previousFrame());
             // Add fields to panel
@@ -217,7 +227,8 @@ public class Game {
             panel.add(rollAgainCheckBox);
             panel.add(addCardsCheckBox);
             panel.add(dontStopCardCheckBox);
-            panel.add(nextButton);
+            panel.add(startButton);
+            panel.add(saveButton);
             panel.add(backButton);
             add(panel); // Add panel to frame
         }
@@ -229,12 +240,8 @@ public class Game {
             }
         }
 
-        private void SaveConfig() {
-
-        }
-
-        private void nextFrame() {
-            specialRules = new SpecialRulesSettings(
+        private void saveConfig() {
+            specialRules = new SpecialRulesRecord(
                     autoAdvanceCheckBox.isSelected(),
                     singleDiceCheckBox.isSelected(),
                     doubleSixCheckBox.isSelected(),
@@ -242,9 +249,37 @@ public class Game {
                     moveAgainCheckBox.isSelected(),
                     rollAgainCheckBox.isSelected(),
                     addCardsCheckBox.isSelected(),
-                    dontStopCardCheckBox.isSelected() );
+                    dontStopCardCheckBox.isSelected()
+            );
+            // Save the records in a file
+            JFileChooser fileChooser = new JFileChooser();
+            if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+                File file = fileChooser.getSelectedFile();
+                try (ObjectOutputStream outputStream = new ObjectOutputStream(new FileOutputStream(file))) {
+                    outputStream.writeObject(primaryRules);
+                    outputStream.writeObject(specialRules);
+                    JOptionPane.showMessageDialog(this, "Configuration saved successfully.", "Saved", JOptionPane.INFORMATION_MESSAGE);
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(this, "The configuration couldn't be saved successfully.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
+
+        private void startGame() {
+            specialRules = new SpecialRulesRecord(
+                    autoAdvanceCheckBox.isSelected(),
+                    singleDiceCheckBox.isSelected(),
+                    doubleSixCheckBox.isSelected(),
+                    stopTilesCheckBox.isSelected(),
+                    moveAgainCheckBox.isSelected(),
+                    rollAgainCheckBox.isSelected(),
+                    addCardsCheckBox.isSelected(),
+                    dontStopCardCheckBox.isSelected()
+            );
 
             //this.setVisible(false);
+            //primaryRulesFrame.dispose();
+            //configFrame.dispose();
         }
 
         private void previousFrame() {
