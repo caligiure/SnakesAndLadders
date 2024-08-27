@@ -10,9 +10,8 @@ public class GameConfiguration {
     private PrimaryRulesRecord primaryRules;
     private SpecialRulesRecord specialRules;
 
-    private JFrame configFrame;
+    private final JFrame configFrame;
     private JFrame primaryRulesFrame;
-    private JFrame specialRulesFrame;
 
     public GameConfiguration() {
         configFrame = new ConfigFrame();
@@ -35,7 +34,7 @@ public class GameConfiguration {
             JButton loadButton = new JButton("Load an old configuration");
             loadButton.addActionListener(e -> loadConfig());
             JButton exitButton = new JButton("Exit");
-            exitButton.addActionListener(e -> this.dispose());
+            exitButton.addActionListener(e -> exitGame());
             // Add buttons to panel
             panel.add(setButton);
             panel.add(loadButton);
@@ -69,6 +68,16 @@ public class GameConfiguration {
                 } catch (ClassNotFoundException | IOException ex) {
                     JOptionPane.showMessageDialog(this, "Error loading file.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
+            }
+        }
+
+        private void exitGame() {
+            int result = JOptionPane.showConfirmDialog(
+                    this, "Are you sure you want to exit?",
+                    "Confirm Exit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
+            );
+            if (result == JOptionPane.YES_OPTION) {
+                this.dispose();
             }
         }
     }
@@ -140,7 +149,7 @@ public class GameConfiguration {
                     // Save the values in the primaryRules record
                     primaryRules = new PrimaryRulesRecord(numPlayers, numRows, numCols, numDices, numLadders, numSnakes);
                     // next frame
-                    specialRulesFrame = new SpecialRulesFrame();
+                    JFrame specialRulesFrame = new SpecialRulesFrame();
                     specialRulesFrame.setVisible(true);
                     this.setVisible(false); // dispose later
                 }
