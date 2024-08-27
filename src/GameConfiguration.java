@@ -3,24 +3,6 @@ import java.awt.*;
 import java.io.*;
 
 public class GameConfiguration {
-    private record PrimaryRulesRecord(
-        int nPlayers,
-        int nRows,
-        int nCols,
-        int nDices,
-        int nLadders,
-        int nSnakes
-    ) implements Serializable {}
-    private record SpecialRulesRecord(
-            boolean autoAdvance,
-            boolean singleDice,
-            boolean doubleSix,
-            boolean stopTiles,
-            boolean moveAgainTiles,
-            boolean rollAgainTiles,
-            boolean addCards,
-            boolean dontStopCard
-    ) implements Serializable {}
     // Since the Special Rules depend on the values of the Primary Rules,
     // the user must first set the Primary Rules
     // Example: The "singleDice" special rule can't be enabled
@@ -110,13 +92,13 @@ public class GameConfiguration {
             // Fields panel
             JPanel panel = new JPanel(new GridLayout(7, 2, 10, 10));
             // Primary fields
-            playersField = new JTextField(""+primaryRules.nPlayers);
-            rowsField = new JTextField(""+primaryRules.nRows);
-            columnsField = new JTextField(""+primaryRules.nCols);
-            laddersField = new JTextField(""+primaryRules.nLadders);
-            snakesField = new JTextField(""+primaryRules.nSnakes);
+            playersField = new JTextField(""+primaryRules.nPlayers());
+            rowsField = new JTextField(""+primaryRules.nRows());
+            columnsField = new JTextField(""+primaryRules.nCols());
+            laddersField = new JTextField(""+primaryRules.nLadders());
+            snakesField = new JTextField(""+primaryRules.nSnakes());
             diceComboBox = new JComboBox<>(new String[] {"1", "2"});
-            diceComboBox.setSelectedIndex(primaryRules.nDices - 1);
+            diceComboBox.setSelectedIndex(primaryRules.nDices() - 1);
             JButton nextButton = new JButton("Next");
             nextButton.addActionListener(e -> nextFrame());
             JButton backButton = new JButton("Back");
@@ -195,18 +177,18 @@ public class GameConfiguration {
             // Fields panel
             JPanel panel = new JPanel(new GridLayout(11, 1, 10, 10));
             // Rules fields
-            autoAdvanceCheckBox = new JCheckBox("Automatically roll the dices and advance", specialRules.autoAdvance);
-            singleDiceCheckBox = new JCheckBox("Use a single dice in the last 6 tiles", specialRules.singleDice);
-            if( primaryRules.nDices<2 ) {
+            autoAdvanceCheckBox = new JCheckBox("Automatically roll the dices and advance", specialRules.autoAdvance());
+            singleDiceCheckBox = new JCheckBox("Use a single dice in the last 6 tiles", specialRules.singleDice());
+            if( primaryRules.nDices() < 2 ) {
                 singleDiceCheckBox.setEnabled(false);
                 singleDiceCheckBox.setSelected(false);
             }
-            doubleSixCheckBox = new JCheckBox("Double Roll if you get Double Six", specialRules.doubleSix);
-            stopTilesCheckBox = new JCheckBox("Add Stopping tiles: bench stops you for 1 turn, tavern stops you for 3 turns", specialRules.stopTiles);
-            moveAgainCheckBox = new JCheckBox("Add special tiles that let you move again without rolling the dice", specialRules.moveAgainTiles);
-            rollAgainCheckBox = new JCheckBox("Add special tiles that let you roll the dice again", specialRules.rollAgainTiles);
-            addCardsCheckBox = new JCheckBox("Add special tiles that let you draw a card", specialRules.addCards);
-            dontStopCardCheckBox = new JCheckBox("Add a special card that you can keep to avoid getting stopped", specialRules.dontStopCard);
+            doubleSixCheckBox = new JCheckBox("Double Roll if you get Double Six", specialRules.doubleSix());
+            stopTilesCheckBox = new JCheckBox("Add Stopping tiles: bench stops you for 1 turn, tavern stops you for 3 turns", specialRules.stopTiles());
+            moveAgainCheckBox = new JCheckBox("Add special tiles that let you move again without rolling the dice", specialRules.moveAgainTiles());
+            rollAgainCheckBox = new JCheckBox("Add special tiles that let you roll the dice again", specialRules.rollAgainTiles());
+            addCardsCheckBox = new JCheckBox("Add special tiles that let you draw a card", specialRules.addCards());
+            dontStopCardCheckBox = new JCheckBox("Add a special card that you can keep to avoid getting stopped", specialRules.dontStopCard());
             if( !addCardsCheckBox.isSelected() ) {
                 dontStopCardCheckBox.setEnabled(false);
                 dontStopCardCheckBox.setSelected(false);
@@ -287,7 +269,4 @@ public class GameConfiguration {
             this.dispose();
         }
     }
-
-
-
 }
