@@ -11,13 +11,14 @@ public class GameBoard {
     // Players
     private String[] playersName;
     private int[] playersPosition;
-    private int currentTurn; // indicates the number of the player who must roll the dices
+    private int nextPlayer; // indicates the number of the player who must roll the dices
 
     public GameBoard(PrimaryRulesRecord primaryRules, SpecialRulesRecord specialRules) {
         this.primaryRules = primaryRules;
         this.specialRules = specialRules;
         playersName = new String[primaryRules.nPlayers()]; // da cambiare con il passaggio dei nomi da GameConfiguration
         playersPosition = new int[primaryRules.nPlayers()];
+        nextPlayer = 0;
         boardFrame = new BoardFrame();
         boardFrame.setVisible(true);
     }
@@ -138,9 +139,9 @@ public class GameBoard {
             if(oldPosition >= 1) {
                 JLabel cell = getCellLabel(oldPosition);
                 StringBuilder newText = new StringBuilder(oldPosition + ".");
-                for (int i = 0; i < primaryRules.nPlayers(); i++) {
-                    if (i != playerIndex)
-                        newText.append(" ").append(playersName[i]); // the other players must be re-added if they were in this cell
+                for (int otherPlayer = 0; otherPlayer < primaryRules.nPlayers(); otherPlayer++) {
+                    if (otherPlayer != playerIndex && playersPosition[otherPlayer] == oldPosition)
+                        newText.append(" ").append(playersName[otherPlayer]); // the other players must be re-added if they are still in the old position
                 }
                 cell.setText(newText.toString());
             }
@@ -148,15 +149,16 @@ public class GameBoard {
             playersPosition[playerIndex] = newPosition;
             JLabel cell = getCellLabel(newPosition);
             StringBuilder newText = new StringBuilder(newPosition + ".");
-            for(int i = 0; i < primaryRules.nPlayers(); i++) {
-                newText.append(" ").append(playersName[i]); // the other players must be re-added if they were in this cell
+            for(int player = 0; player < primaryRules.nPlayers(); player++) {
+                if(playersPosition[player] == newPosition)
+                    newText.append(" ").append(playersName[player]); // the other players must be re-added if they were in this cell
             }
             cell.setText(newText.toString());
         }
 
         private void nextTurn() { // updates the turn and makes a player roll the dice
-            int currentPlayer = currentTurn;
-            currentTurn = (currentTurn+1)%primaryRules.nPlayers();
+            int currentPlayer = nextPlayer;
+            nextPlayer = (nextPlayer +1) % primaryRules.nPlayers();
             rollDice(currentPlayer);
         }
 
