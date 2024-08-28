@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Moving players works">
+    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Working on gamelog">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GameBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameBoard.java" afterDir="false" />
     </list>
@@ -132,7 +132,7 @@
       <workItem from="1723627915392" duration="596000" />
       <workItem from="1724667995499" duration="91000" />
       <workItem from="1724668105867" duration="15005000" />
-      <workItem from="1724741147674" duration="37417000" />
+      <workItem from="1724741147674" duration="44463000" />
     </task>
     <task id="LOCAL-00001" summary="The board gridLayout is working!">
       <option name="closed" value="true" />
@@ -230,7 +230,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724841417287</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Working on gamelog">
+      <option name="closed" value="true" />
+      <created>1724847274707</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1724847274707</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -250,7 +258,8 @@
     <MESSAGE value="Visualizing players on the board" />
     <MESSAGE value="Rolling the dice" />
     <MESSAGE value="Moving players works" />
-    <option name="LAST_COMMIT_MESSAGE" value="Moving players works" />
+    <MESSAGE value="Working on gamelog" />
+    <option name="LAST_COMMIT_MESSAGE" value="Working on gamelog" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

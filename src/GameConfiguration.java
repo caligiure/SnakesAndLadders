@@ -21,7 +21,7 @@ public class GameConfiguration {
     private class ConfigFrame extends JFrame {
         public ConfigFrame() {
             // Set the JFrame
-            setTitle("Configure the Snakes And Ladders game");
+            setTitle("Snakes And Ladders");
             setSize(300, 300);
             setLocationRelativeTo(null); // sets the location of this frame at the center of the screen
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
