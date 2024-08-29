@@ -185,7 +185,7 @@ public class GameBoard {
             gameLog = new JTextArea();
             gameLog.setEditable(false);
             return new JScrollPane(gameLog);
-        }
+        } // builds a gameLog to show all the game infos
 
         private JScrollPane buildPlayersTable() {
             // Side table with players ID and name
@@ -199,7 +199,7 @@ public class GameBoard {
             playersTable = new DefaultTableModel(data, columnNames);
             JTable table = new JTable(playersTable); // contains the default table model
             return new JScrollPane(table); // JScrollPane makes the table scrollable
-        }
+        } // builds a player to show every player's tag, name and position
 
         private void updatePlayerPosition(int playerIndex, int newPosition) {
             // remove player from the old cell
@@ -224,36 +224,25 @@ public class GameBoard {
             }
             newText.append("</html>");
             cell.setText(newText.toString());
-        }
+        } // removes a player from the old cell and adds it to the new one
 
         private void updatePlayersTableAndGameLog(int playerIndex, int newPosition) {
             playersTable.setValueAt(newPosition, playerIndex, 2);
             gameLog.append("Player " + playersTag[playerIndex] + " moves to cell " + newPosition + ".\n");
-        }
-
-        private void checkTile(int currentPlayer, int position) {
-            int finalCell = primaryRules.nRows()*primaryRules.nCols();
-            if(position == finalCell) {
-                endGame(currentPlayer);
-            }
-
-        }
-
-        private void endGame(int currentPlayer) {
-            String winnerMessage = playersName[currentPlayer] + " (Player " + playersTag[currentPlayer] + ") wins the game!";
-            JOptionPane.showMessageDialog(this, winnerMessage, "Winner!", JOptionPane.INFORMATION_MESSAGE);
-            // exit or restart the game
-            int response = JOptionPane.showConfirmDialog(this, "Do you want to restart this match?", "Restart?", JOptionPane.YES_NO_OPTION);
-            if (response == JOptionPane.YES_OPTION) {
-                new GameBoard(primaryRules, specialRules);  // reset this game with the same configuration
-                boardFrame.dispose();
-            } else {
-                new GameConfiguration(); // goes back to main menu
-                boardFrame.dispose();
-            }
-        }
-
+        } // updates the position of the player on the playersTable and adds a new log on the gameLog regarding its movement
     }
+
+    private void startGame() {
+        initializePlayersPosition();
+        gameLog.append("Next Player: " + playersTag[0] + ".\n");
+    }
+
+    private void initializePlayersPosition() {
+        for(int i=0; i<primaryRules.nPlayers(); i++){
+            playersPosition[i] = 1; // the starting point for every player is cell 1
+            boardFrame.updatePlayerPosition(i, 1);
+        }
+    } // sets the starting position ov every player
 
     private class RollDiceListener implements ActionListener {
         @Override
@@ -265,7 +254,7 @@ public class GameBoard {
             int currentPlayer = nextPlayer;
             int newPosition = calculateNewPosition(currentPlayer);
             movePlayer(currentPlayer, newPosition);
-            boardFrame.checkTile(currentPlayer, newPosition); // check for snakes, ladders, special tiles or final cell
+            checkTile(currentPlayer, newPosition); // check for snakes, ladders, special tiles or final cell
 
             nextTurn();
         }
@@ -291,6 +280,27 @@ public class GameBoard {
             boardFrame.updatePlayersTableAndGameLog(playerIndex, newPosition);
         }
 
+        private void checkTile(int currentPlayer, int position) {
+            int finalCell = primaryRules.nRows()*primaryRules.nCols();
+            if(position == finalCell) {
+                endGame(currentPlayer);
+            }
+        }
+
+        private void endGame(int currentPlayer) {
+            String winnerMessage = playersName[currentPlayer] + " (Player " + playersTag[currentPlayer] + ") wins the game!";
+            JOptionPane.showMessageDialog(boardFrame, winnerMessage, "Winner!", JOptionPane.INFORMATION_MESSAGE);
+            // exit or restart the game
+            int response = JOptionPane.showConfirmDialog(boardFrame, "Do you want to restart this match?", "Restart?", JOptionPane.YES_NO_OPTION);
+            if (response == JOptionPane.YES_OPTION) {
+                new GameBoard(primaryRules, specialRules);  // reset this game with the same configuration
+                boardFrame.dispose();
+            } else {
+                new GameConfiguration(); // goes back to main menu
+                boardFrame.dispose();
+            }
+        }
+
         private void nextTurn() {
             nextPlayer = (nextPlayer +1) % primaryRules.nPlayers();  // updates the turn
             gameLog.append("Next Player: " + playersTag[nextPlayer] + ".\n");
@@ -298,15 +308,4 @@ public class GameBoard {
 
     }
 
-    private void startGame() {
-        initializePlayersPosition();
-        gameLog.append("Next Player: " + playersTag[0] + ".\n");
-    }
-
-    private void initializePlayersPosition() {
-        for(int i=0; i<primaryRules.nPlayers(); i++){
-            playersPosition[i] = 1; // the starting point for every player is cell 1
-            boardFrame.updatePlayerPosition(i, 1);
-        }
-    } // sets the starting position ov every player
 }
