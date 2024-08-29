@@ -3,6 +3,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -12,6 +13,7 @@ public class GameBoard {
     private final SpecialRulesRecord specialRules;
     // Game Board
     private final BoardFrame boardFrame;
+    private final BoardPanel boardPanel;
     private JLabel[][] cells;
     private final RollDiceListener rollDiceListener;
     // Players
@@ -23,14 +25,25 @@ public class GameBoard {
     private DefaultTableModel playersTable;  // shows ID, name and position of every player
     private JTextArea gameLog;  // Text area for gameLog
     // snakes, ladders and special cells
-    // 0: empty, 1: ladder startingPoint, 2: ladder arrivalPoint, 3: snake head, 4: snake tail, 5: special cell
-    private int[][] cellsContent;
+    private final List<int[]> ladders; // bottom and top position of every ladder
+    private final List<int[]> snakes; // head and tail position of every snake
+    private final contentType[][] cellsContent; // the type of content of every cell
+    private enum contentType {
+        empty, ladderBottom, ladderTop, snakeHead, snakeTail
+    }
 
     public GameBoard(PrimaryRulesRecord primaryRules, SpecialRulesRecord specialRules) {
         this.primaryRules = primaryRules;
         this.specialRules = specialRules;
 
-        cellsContent = new int[primaryRules.nRows()][primaryRules.nCols()]; // snakes, ladders and special cells
+        ladders = new LinkedList<>();
+        snakes = new LinkedList<>();
+        cellsContent = new contentType[primaryRules.nRows()][primaryRules.nCols()]; // snakes, ladders and special cells
+        for(int i = 0; i < primaryRules.nRows(); i++) {
+            for(int j = 0; j < primaryRules.nCols(); j++) {
+                cellsContent[i][j]= contentType.empty;
+            }
+        }
 
         playersName = new String[primaryRules.nPlayers()]; // da cambiare con l'inserimento dei nomi
 
@@ -72,8 +85,8 @@ public class GameBoard {
             JPanel sidePanel = buildSidePanel(); // create a side panel to show game log and players table
             add(sidePanel, BorderLayout.EAST);
 
-            initializeSnakesAndLadders();
-            showSnakesAndLadders();
+            initializeLaddersAndSnakes();
+            showLaddersAndSnakes();
         }
 
         private void initializeFrame() {
@@ -232,67 +245,66 @@ public class GameBoard {
             cell.setText(newText.toString());
         } // removes a player from the old cell and adds it to the new one
 
-        private void updatePlayersTableAndGameLog(int playerIndex, int newPosition) {
+        private void updatePlayersTableAndGameLog(int playerIndex, int newPosition, contentType event) {
             playersTable.setValueAt(newPosition, playerIndex, 2);
+            if(event.equals(contentType.ladderBottom))
+                gameLog.append("Player " + playersTag[playerIndex] + " stepped on a ladder.\n");
+            if(event.equals(contentType.snakeHead))
+                gameLog.append("Player " + playersTag[playerIndex] + " stepped on a snake.\n");
             gameLog.append("Player " + playersTag[playerIndex] + " moves to cell " + newPosition + ".\n");
         } // updates the position of the player on the playersTable and adds a new log on the gameLog regarding its movement
 
-        private void initializeSnakesAndLadders() {
+        private void initializeLaddersAndSnakes() {
             Random random = new Random();
             int nRows = primaryRules.nRows();
             int nCols = primaryRules.nCols();
-            // every row of a matrix represents a ladder/snake,
-            // the first two columns of the row are the coordinates of the starting cell,
-            // the second two columns of the row are the coordinates of the arrival cell
-            ladders = new int[primaryRules.nLadders()][4];
-            snakesAndLadders = new int[primaryRules.nSnakes()][4];
-            cellsContainingSomething = new LinkedList<>(); // indicates the indexes of the cells which contain a snake or a ladder or are special cells
-            // choose randomly the starting and arrival point of every ladder, avoiding the cells that already contain something
+            // choose randomly the bottom and top point of every ladder, avoiding the cells that already contain something
             // the first and last cell of the board cannot contain ladders
             for(int i=0; i<primaryRules.nLadders(); i++) {
-                int startingPoint = random.nextInt(2, nRows*nCols-1); // the second-last cell can't be a starting point for a ladder
-                while( cellsContainingSomething.contains(startingPoint) ) {
-                    startingPoint = random.nextInt(2, nRows*nCols-1);
+                int ladderBottom = random.nextInt(2, nRows*nCols-1); // the second-last cell can't contain the bottom of a ladder
+                int[] coords = findCoordinates(ladderBottom);
+                while( !cellsContent[coords[0]][coords[1]].equals(contentType.empty) ) { // checks if the cell is empty
+                    ladderBottom = random.nextInt(2, nRows*nCols-1);
+                    coords = findCoordinates(ladderBottom);
                 }
-                cellsContainingSomething.add(startingPoint);
-                int[] startingCoordinates = findCoordinates(startingPoint);
-                ladders[i][0] = startingCoordinates[0]; // x coordinate
-                ladders[i][1] = startingCoordinates[1]; // y coordinate
-                // arrivalPoint must be after startingPoint
-                int arrivalPoint = random.nextInt(startingPoint+1, nRows*nCols);
-                while( cellsContainingSomething.contains(arrivalPoint) ) {
-                    arrivalPoint = random.nextInt(startingPoint+1, nRows*nCols);
+                cellsContent[coords[0]][coords[1]] = contentType.ladderBottom; // assign the ladderBottom
+                // ladderTop must be after startingPoint
+                int ladderTop = random.nextInt(ladderBottom+1, nRows*nCols);
+                coords = findCoordinates(ladderTop);
+                while( !cellsContent[coords[0]][coords[1]].equals(contentType.empty) ) { // checks if the cell is empty
+                    ladderTop = random.nextInt(ladderBottom+1, nRows*nCols);
                 }
-                cellsContainingSomething.add(arrivalPoint);
-                int[] arrivalCoordinates = findCoordinates(arrivalPoint);
-                ladders[i][2] = arrivalCoordinates[0]; // x
-                ladders[i][3] = arrivalCoordinates[1]; // y
+                cellsContent[coords[0]][coords[1]] = contentType.ladderTop; // assign the ladderTop
+                // add ladder to ladders list
+                ladders.add( new int[]{ladderBottom, ladderTop} );
             }
             // choose randomly the head and tail point of every snake, avoiding the cells that already contain something
             for(int i=0; i<primaryRules.nSnakes(); i++) {
-                int headPoint = random.nextInt(1, nRows*nCols); // the first and final cells cannot be a head point for a snake
-                while( cellsContainingSomething.contains(headPoint) ) {
-                    headPoint = random.nextInt(1, nRows*nCols);
+                int snakeHead = random.nextInt(1, nRows*nCols); // the first and final cells cannot be a head point for a snake
+                int[] coords = findCoordinates(snakeHead);
+                while( !cellsContent[coords[0]][coords[1]].equals(contentType.empty) ) {
+                    snakeHead = random.nextInt(1, nRows*nCols);
                 }
-                cellsContainingSomething.add(headPoint);
-                int[] headCoordinates = findCoordinates(headPoint);
-                snakesAndLadders[i][0] = headCoordinates[0]; // x coordinate
-                snakesAndLadders[i][1] = headCoordinates[1]; // y coordinate
-                // tailPoint must be before headPoint
-                int tailPoint = random.nextInt(1, headPoint);
-                while( cellsContainingSomething.contains(tailPoint) ) {
-                    tailPoint = random.nextInt(1, headPoint);
+                cellsContent[coords[0]][coords[1]] = contentType.snakeHead; // assign the snakeHead
+                // snakeTail must be before headPoint
+                int snakeTail = random.nextInt(1, snakeHead);
+                coords = findCoordinates(snakeTail);
+                while( !cellsContent[coords[0]][coords[1]].equals(contentType.empty) ) {
+                    snakeTail = random.nextInt(1, snakeHead);
                 }
-                cellsContainingSomething.add(tailPoint);
-                int[] tailCoordinates = findCoordinates(tailPoint);
-                ladders[i][2] = tailCoordinates[0]; // x
-                ladders[i][3] = tailCoordinates[1]; // y
+                cellsContent[coords[0]][coords[1]] = contentType.snakeTail; // assign the snakeTail
+                // add snake to snakes list
+                snakes.add( new int[]{snakeHead, snakeTail} );
             }
         } // choose randomly the position for every ladder and snake
 
-        private void showSnakesAndLadders() {
+        private void showLaddersAndSnakes() {
             // lofarò
         }
+    }
+
+    private class BoardPanel extends JPanel {
+
     }
 
     private void startGame() {
@@ -310,16 +322,14 @@ public class GameBoard {
     private class RollDiceListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            rollDice();
+            rollDice(contentType.empty);
+            nextTurn();
         }
 
-        private void rollDice(){
+        private void rollDice(contentType event){
             int currentPlayer = nextPlayer;
             int newPosition = calculateNewPosition(currentPlayer);
-            movePlayer(currentPlayer, newPosition);
-            checkTile(currentPlayer, newPosition); // check for snakes, ladders, special tiles or final cell
-
-            nextTurn();
+            movePlayer(currentPlayer, newPosition, event);
         }
 
         private int calculateNewPosition(int currentPlayer) {
@@ -338,17 +348,27 @@ public class GameBoard {
             return newPosition;
         }
 
-        private void movePlayer(int playerIndex, int newPosition) {
-            boardFrame.updatePlayerPosition(playerIndex, newPosition);
-            boardFrame.updatePlayersTableAndGameLog(playerIndex, newPosition);
+        private void movePlayer(int currentPlayer, int newPosition, contentType event) {
+            boardFrame.updatePlayerPosition(currentPlayer, newPosition);
+            boardFrame.updatePlayersTableAndGameLog(currentPlayer, newPosition, event);
+            checkTile(currentPlayer, newPosition); // check for snakes, ladders, special tiles or final cell
         }
 
         private void checkTile(int currentPlayer, int position) {
             int finalCell = primaryRules.nRows()*primaryRules.nCols();
+            int[] coords = boardFrame.findCoordinates(position);
             if(position == finalCell) {
                 endGame(currentPlayer);
-            } else if (isLadder(position)) {
-
+            } else if(cellsContent[coords[0]][coords[1]].equals(contentType.ladderBottom)) {
+                for(int[] ladder : ladders) {
+                    if (ladder[0] == position)
+                        movePlayer(currentPlayer, ladder[1], contentType.ladderBottom);
+                }
+            } else if(cellsContent[coords[0]][coords[1]].equals(contentType.snakeHead)) {
+                for(int[] snake : snakes) {
+                    if(snake[0] == position)
+                        movePlayer(currentPlayer, snake[1], contentType.snakeHead);
+                }
             }
         }
 
@@ -364,11 +384,6 @@ public class GameBoard {
                 new GameConfiguration(); // goes back to main menu
                 boardFrame.dispose();
             }
-        }
-
-        private boolean isLadder(int position) {
-            int[] cord = boardFrame.findCoordinates(position);
-            return ;
         }
 
         private void nextTurn() {
