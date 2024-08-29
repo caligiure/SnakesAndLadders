@@ -139,12 +139,18 @@ public class GameConfiguration {
                 int numLadders = Integer.parseInt(laddersField.getText());
                 int numSnakes = Integer.parseInt(snakesField.getText());
                 int numDices = diceComboBox.getSelectedIndex() + 1;
-                if(numDices < 0)
-                    numDices = 0;
-                if(numPlayers <= 0)
-                    JOptionPane.showMessageDialog(this, "The number of players cannot be 0.", "Invalid Number of Players", JOptionPane.ERROR_MESSAGE);
-                else if(numRows <= 0 && numCols <= 0)
-                    JOptionPane.showMessageDialog(this, "Rows and Columns values cannot both be zero.", "Invalid Rows and Columns", JOptionPane.ERROR_MESSAGE);
+                if (numDices < 1)
+                    numDices = 1;
+                if (numPlayers <= 0)
+                    JOptionPane.showMessageDialog(this, "The number of players cannot be 0.",
+                            "Invalid Number of Players", JOptionPane.ERROR_MESSAGE);
+                else if (numRows < 3 || numCols < 3)
+                    JOptionPane.showMessageDialog(this, "Rows and Columns values must be at least 3.",
+                            "Invalid Rows and Columns", JOptionPane.ERROR_MESSAGE);
+                else if ( ((numLadders + numSnakes) * 2) > ((numCols * numRows) - 2) )
+                    JOptionPane.showMessageDialog(this,
+                            "A "+numRows+"x"+numCols+" board can contain a maximum of "+(((numCols*numRows)-2)/2)+" elements, summing both snakes and ladders",
+                            "Too many snakes and ladders", JOptionPane.ERROR_MESSAGE);
                 else {
                     // Save the values in the primaryRules record
                     primaryRules = new PrimaryRulesRecord(numPlayers, numRows, numCols, numDices, numLadders, numSnakes);
