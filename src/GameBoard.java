@@ -13,7 +13,6 @@ public class GameBoard {
     private final SpecialRulesRecord specialRules;
     // Game Board
     private final BoardFrame boardFrame;
-    private final BoardPanel boardPanel;
     private JLabel[][] cells;
     private final RollDiceListener rollDiceListener;
     // Players
@@ -76,10 +75,10 @@ public class GameBoard {
         public BoardFrame() {
             initializeFrame(); // sets the name, size and layout of the frame
 
-            JPanel boardPanel = buildBoardPanel(); // builds the panel which contains the cells of the board
+            JPanel boardPanel = new BoardPanel(); // panel that contains the cells of the board
             add(boardPanel, BorderLayout.CENTER);
 
-            JPanel bottomPanel = buildBottomPanel(); // creates a bottom panel which will hold the buttons
+            JPanel bottomPanel = buildBottomPanel(); // creates a bottom panel that will hold the buttons
             add(bottomPanel, BorderLayout.SOUTH);
 
             JPanel sidePanel = buildSidePanel(); // create a side panel to show game log and players table
@@ -115,22 +114,7 @@ public class GameBoard {
                 }
             }
             return boardPanel;
-        } // builds the panel which contains the cells of the board
-
-        private int findPosition(int x, int y) {
-            int rows = primaryRules.nRows();
-            int cols = primaryRules.nCols();
-            // the starting point must always be in the bottom-left corner
-            int rowFromBottom = rows - 1 - x;  // Number of the row counting from the bottom
-            boolean isEvenRow = rowFromBottom % 2 == 0; // even row counting from the bottom
-            int index;
-            if (isEvenRow) {
-                index = (rowFromBottom * cols) + y + 1; // counting from left to right
-            } else {
-                index = (rowFromBottom * cols) + (cols - y); // counting from right to left
-            }
-            return index;
-        } // returns the index of the cell, given the coordinates od the cells matrix
+        } // builds the panel that contains the cells of the board
 
         private int[] findCoordinates(int position) {
             int rows = primaryRules.nRows();
@@ -273,6 +257,7 @@ public class GameBoard {
                 coords = findCoordinates(ladderTop);
                 while( !cellsContent[coords[0]][coords[1]].equals(contentType.empty) ) { // checks if the cell is empty
                     ladderTop = random.nextInt(ladderBottom+1, nRows*nCols);
+                    coords = findCoordinates(ladderTop);
                 }
                 cellsContent[coords[0]][coords[1]] = contentType.ladderTop; // assign the ladderTop
                 // add ladder to ladders list
@@ -280,10 +265,11 @@ public class GameBoard {
             }
             // choose randomly the head and tail point of every snake, avoiding the cells that already contain something
             for(int i=0; i<primaryRules.nSnakes(); i++) {
-                int snakeHead = random.nextInt(1, nRows*nCols); // the first and final cells cannot be a head point for a snake
+                int snakeHead = random.nextInt(2, nRows*nCols); // the first and final cells cannot be a head point for a snake
                 int[] coords = findCoordinates(snakeHead);
                 while( !cellsContent[coords[0]][coords[1]].equals(contentType.empty) ) {
-                    snakeHead = random.nextInt(1, nRows*nCols);
+                    snakeHead = random.nextInt(2, nRows*nCols);
+                    coords = findCoordinates(snakeHead);
                 }
                 cellsContent[coords[0]][coords[1]] = contentType.snakeHead; // assign the snakeHead
                 // snakeTail must be before headPoint
@@ -291,6 +277,7 @@ public class GameBoard {
                 coords = findCoordinates(snakeTail);
                 while( !cellsContent[coords[0]][coords[1]].equals(contentType.empty) ) {
                     snakeTail = random.nextInt(1, snakeHead);
+                    coords = findCoordinates(snakeTail);
                 }
                 cellsContent[coords[0]][coords[1]] = contentType.snakeTail; // assign the snakeTail
                 // add snake to snakes list
@@ -304,8 +291,66 @@ public class GameBoard {
     }
 
     private class BoardPanel extends JPanel {
+        public BoardPanel() {
+            super(new GridLayout(primaryRules.nRows(), primaryRules.nCols()));
+            cells = new JLabel[primaryRules.nRows()][primaryRules.nCols()]; // create matrix of labels
+            int rows = primaryRules.nRows();
+            int cols = primaryRules.nCols();
+            // fill the board from last to first cell
+            for(int i = 0; i < rows; i++) {
+                for(int j = 0; j < cols; j++) {
+                    int cellLabel = findPosition(i, j); // returns the index of the cell, given the coordinates od the cells matrix
+                    String text = "<html>" + cellLabel + ")</html>";
+                    cells[i][j] = new JLabel(text, SwingConstants.CENTER);
+                    cells[i][j].setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                    //cells[i][j].setOpaque(true); //CONTROLLA POI
+                    add(cells[i][j]);
+                }
+            }
+        }
 
-    }
+        @Override
+        protected void paintComponent(Graphics g) {
+            // Draw ladders
+            g.setColor(Color.GREEN);
+            for (int[] ladder : ladders) {
+                Point startPoint = calculateDrawingPoint(ladder[0]);
+                Point endPoint = calculateDrawingPoint(ladder[1]);
+                g.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y); // draws a straight line that represents the ladder
+            }
+            // Draw snakes
+            g.setColor(Color.RED);
+            for (int[] snake : snakes) {
+                Point startPoint = calculateDrawingPoint(snake[0]);
+                Point endPoint = calculateDrawingPoint(snake[1]);
+                g.drawArc(startPoint.x, startPoint.y, endPoint.x - startPoint.x, endPoint.y - startPoint.y, 0, 180); // draws a straight line that represents the snake
+            }
+        }
+
+        private Point calculateDrawingPoint(int position) {
+            int rows = primaryRules.nRows();
+            int cols = primaryRules.nCols();
+            int[] coords = boardFrame.findCoordinates(position);
+            int x = coords[0];
+            int y = coords[1];
+            return new Point(x * (cells[x][y].getWidth() / 2), y * (cells[x][y].getHeight()) / 2);
+        }
+    } // panel that contains the cells of the board
+
+    private int findPosition(int x, int y) {
+        int rows = primaryRules.nRows();
+        int cols = primaryRules.nCols();
+        // the starting point must always be in the bottom-left corner
+        int rowFromBottom = rows - 1 - x;  // Number of the row counting from the bottom
+        boolean isEvenRow = rowFromBottom % 2 == 0; // even row counting from the bottom
+        int index;
+        if (isEvenRow) {
+            index = (rowFromBottom * cols) + y + 1; // counting from left to right
+        } else {
+            index = (rowFromBottom * cols) + (cols - y); // counting from right to left
+        }
+        return index;
+    } // returns the index of the cell, given the coordinates od the cells matrix
 
     private void startGame() {
         initializePlayersPosition();

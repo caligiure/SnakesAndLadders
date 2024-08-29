@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Checkpoint before changing the system for storing snakes and ladders">
+    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="System for snakes and ladders done, starting to work on visualizing them">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GameBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameBoard.java" afterDir="false" />
     </list>
@@ -133,7 +133,7 @@
       <workItem from="1724667995499" duration="91000" />
       <workItem from="1724668105867" duration="15005000" />
       <workItem from="1724741147674" duration="45297000" />
-      <workItem from="1724923039623" duration="15851000" />
+      <workItem from="1724923039623" duration="19500000" />
     </task>
     <task id="LOCAL-00001" summary="The board gridLayout is working!">
       <option name="closed" value="true" />
@@ -279,7 +279,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724945591049</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="System for snakes and ladders done, starting to work on visualizing them">
+      <option name="closed" value="true" />
+      <created>1724949684005</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1724949684005</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -304,7 +312,8 @@
     <MESSAGE value="Created RollDiceListener and moved related methods inside it" />
     <MESSAGE value="Adding snakes and ladders" />
     <MESSAGE value="Checkpoint before changing the system for storing snakes and ladders" />
-    <option name="LAST_COMMIT_MESSAGE" value="Checkpoint before changing the system for storing snakes and ladders" />
+    <MESSAGE value="System for snakes and ladders done, starting to work on visualizing them" />
+    <option name="LAST_COMMIT_MESSAGE" value="System for snakes and ladders done, starting to work on visualizing them" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
