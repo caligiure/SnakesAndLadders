@@ -22,13 +22,15 @@ public class GameBoard {
     // Game Log
     private DefaultTableModel playersTable;  // shows ID, name and position of every player
     private JTextArea gameLog;  // Text area for gameLog
-    // snakes and ladders
-    private int[][] snakes, ladders;
-    LinkedList<Integer> cellsContainingSomething; // indicates the indexes of the cells which contain a snake or a ladder or are special cells
+    // snakes, ladders and special cells
+    // 0: empty, 1: ladder startingPoint, 2: ladder arrivalPoint, 3: snake head, 4: snake tail, 5: special cell
+    private int[][] cellsContent;
 
     public GameBoard(PrimaryRulesRecord primaryRules, SpecialRulesRecord specialRules) {
         this.primaryRules = primaryRules;
         this.specialRules = specialRules;
+
+        cellsContent = new int[primaryRules.nRows()][primaryRules.nCols()]; // snakes, ladders and special cells
 
         playersName = new String[primaryRules.nPlayers()]; // da cambiare con l'inserimento dei nomi
 
@@ -91,7 +93,7 @@ public class GameBoard {
             // fill the board from last to first cell
             for(int i = 0; i < rows; i++) {
                 for(int j = 0; j < cols; j++) {
-                    int cellLabel = indexPosition(i, j); // returns the index of the cell, given the coordinates od the cells matrix
+                    int cellLabel = findPosition(i, j); // returns the index of the cell, given the coordinates od the cells matrix
                     String text = "<html>" + cellLabel + ")</html>";
                     cells[i][j] = new JLabel(text, SwingConstants.CENTER);
                     cells[i][j].setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -102,7 +104,7 @@ public class GameBoard {
             return boardPanel;
         } // builds the panel which contains the cells of the board
 
-        private int indexPosition(int x, int y) {
+        private int findPosition(int x, int y) {
             int rows = primaryRules.nRows();
             int cols = primaryRules.nCols();
             // the starting point must always be in the bottom-left corner
@@ -117,20 +119,20 @@ public class GameBoard {
             return index;
         } // returns the index of the cell, given the coordinates od the cells matrix
 
-        private int[] findCoordinates(int index) {
+        private int[] findCoordinates(int position) {
             int rows = primaryRules.nRows();
             int cols = primaryRules.nCols();
-            int rowFromBottom = (index - 1) / cols; // Number of the row counting from the bottom
+            int rowFromBottom = (position - 1) / cols; // Number of the row counting from the bottom
             int x = rows - 1 - rowFromBottom;       // x coordinate
             boolean isEvenRow = rowFromBottom % 2 == 0; // even row counting from the bottom
             int y;
             if (isEvenRow) {
-                y = (index - 1) % cols; // counting from left to right
+                y = (position - 1) % cols; // counting from left to right
             } else {
-                y = cols - 1 - ((index - 1) % cols); // counting from right to left
+                y = cols - 1 - ((position - 1) % cols); // counting from right to left
             }
             return new int[]{x, y};
-        } // returns an array containing the x and y coordinates of a cell in the cells matrix, given its index
+        } // returns an array containing the x and y coordinates of a cell in the cells matrix, given its position
 
         private JLabel getCellLabel(int i) {
             int[] cord = findCoordinates(i);
@@ -243,7 +245,7 @@ public class GameBoard {
             // the first two columns of the row are the coordinates of the starting cell,
             // the second two columns of the row are the coordinates of the arrival cell
             ladders = new int[primaryRules.nLadders()][4];
-            snakes = new int[primaryRules.nSnakes()][4];
+            snakesAndLadders = new int[primaryRules.nSnakes()][4];
             cellsContainingSomething = new LinkedList<>(); // indicates the indexes of the cells which contain a snake or a ladder or are special cells
             // choose randomly the starting and arrival point of every ladder, avoiding the cells that already contain something
             // the first and last cell of the board cannot contain ladders
@@ -274,8 +276,8 @@ public class GameBoard {
                 }
                 cellsContainingSomething.add(headPoint);
                 int[] headCoordinates = findCoordinates(headPoint);
-                snakes[i][0] = headCoordinates[0]; // x coordinate
-                snakes[i][1] = headCoordinates[1]; // y coordinate
+                snakesAndLadders[i][0] = headCoordinates[0]; // x coordinate
+                snakesAndLadders[i][1] = headCoordinates[1]; // y coordinate
                 // tailPoint must be before headPoint
                 int tailPoint = random.nextInt(1, headPoint);
                 while( cellsContainingSomething.contains(tailPoint) ) {
@@ -345,6 +347,8 @@ public class GameBoard {
             int finalCell = primaryRules.nRows()*primaryRules.nCols();
             if(position == finalCell) {
                 endGame(currentPlayer);
+            } else if (isLadder(position)) {
+
             }
         }
 
@@ -360,6 +364,11 @@ public class GameBoard {
                 new GameConfiguration(); // goes back to main menu
                 boardFrame.dispose();
             }
+        }
+
+        private boolean isLadder(int position) {
+            int[] cord = boardFrame.findCoordinates(position);
+            return ;
         }
 
         private void nextTurn() {

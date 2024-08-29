@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Created RollDiceListener and moved related methods inside it">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GameBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameBoard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GameConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameConfiguration.java" afterDir="false" />
-    </list>
+    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Adding snakes and ladders" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -134,7 +130,7 @@
       <workItem from="1724667995499" duration="91000" />
       <workItem from="1724668105867" duration="15005000" />
       <workItem from="1724741147674" duration="45297000" />
-      <workItem from="1724923039623" duration="10978000" />
+      <workItem from="1724923039623" duration="11367000" />
     </task>
     <task id="LOCAL-00001" summary="The board gridLayout is working!">
       <option name="closed" value="true" />
@@ -264,7 +260,15 @@
       <option name="project" value="LOCAL" />
       <updated>1724938233963</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Adding snakes and ladders">
+      <option name="closed" value="true" />
+      <created>1724943110725</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1724943110725</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -287,7 +291,8 @@
     <MESSAGE value="Working on gamelog" />
     <MESSAGE value="Endgame done" />
     <MESSAGE value="Created RollDiceListener and moved related methods inside it" />
-    <option name="LAST_COMMIT_MESSAGE" value="Created RollDiceListener and moved related methods inside it" />
+    <MESSAGE value="Adding snakes and ladders" />
+    <option name="LAST_COMMIT_MESSAGE" value="Adding snakes and ladders" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
