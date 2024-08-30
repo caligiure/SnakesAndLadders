@@ -26,8 +26,8 @@ public class GameBoard {
     // snakes, ladders and special cells
     private List<int[]> ladders; // bottom and top position of every ladder
     private List<int[]> snakes; // head and tail position of every snake
-    private contentType[][] cellsContent; // the type of content of every cell
-    private enum contentType {
+    private Content[][] cellsContent; // the type of content of every cell
+    private enum Content {
         empty, ladderBottom, ladderTop, snakeHead, snakeTail
     }
 
@@ -44,7 +44,7 @@ public class GameBoard {
         boardFrame.setVisible(true);
 
         initializePlayersPosition();
-        logSnakesAndLaddersPosition(); // elimina poi
+        // logSnakesAndLaddersPosition(); // elimina poi
         gameLog.append("Next Player: " + playersTag[0] + ".\n");
     }
 
@@ -63,10 +63,10 @@ public class GameBoard {
         int nCols = primaryRules.nCols();
         ladders = new LinkedList<>();
         snakes = new LinkedList<>();
-        cellsContent = new contentType[nRows][nCols]; // snakes, ladders and special cells
+        cellsContent = new Content[nRows][nCols]; // snakes, ladders and special cells
         for(int i = 0; i < primaryRules.nRows(); i++) {
             for(int j = 0; j < primaryRules.nCols(); j++) {
-                cellsContent[i][j]= contentType.empty;
+                cellsContent[i][j]= Content.empty;
             }
         }
         // choose randomly the bottom and top point of every ladder, avoiding the cells that already contain something
@@ -74,19 +74,19 @@ public class GameBoard {
         for(int i=0; i<primaryRules.nLadders(); i++) {
             int ladderBottom = random.nextInt(2, nRows*nCols-1); // the second-last cell can't contain the bottom of a ladder
             int[] coords = findCoordinates(ladderBottom);
-            while( !cellsContent[coords[0]][coords[1]].equals(contentType.empty) ) { // checks if the cell is empty
+            while( !cellsContent[coords[0]][coords[1]].equals(Content.empty) ) { // checks if the cell is empty
                 ladderBottom = random.nextInt(2, nRows*nCols-1);
                 coords = findCoordinates(ladderBottom);
             }
-            cellsContent[coords[0]][coords[1]] = contentType.ladderBottom; // assign the ladderBottom
+            cellsContent[coords[0]][coords[1]] = Content.ladderBottom; // assign the ladderBottom
             // ladderTop must be after startingPoint
             int ladderTop = random.nextInt(ladderBottom+1, nRows*nCols);
             coords = findCoordinates(ladderTop);
-            while( !cellsContent[coords[0]][coords[1]].equals(contentType.empty) ) { // checks if the cell is empty
+            while( !cellsContent[coords[0]][coords[1]].equals(Content.empty) ) { // checks if the cell is empty
                 ladderTop = random.nextInt(ladderBottom+1, nRows*nCols);
                 coords = findCoordinates(ladderTop);
             }
-            cellsContent[coords[0]][coords[1]] = contentType.ladderTop; // assign the ladderTop
+            cellsContent[coords[0]][coords[1]] = Content.ladderTop; // assign the ladderTop
             // add ladder to ladders list
             ladders.add( new int[]{ladderBottom, ladderTop} );
         }
@@ -94,19 +94,19 @@ public class GameBoard {
         for(int i=0; i<primaryRules.nSnakes(); i++) {
             int snakeHead = random.nextInt(2, nRows*nCols); // the first and final cells cannot be a head point for a snake
             int[] coords = findCoordinates(snakeHead);
-            while( !cellsContent[coords[0]][coords[1]].equals(contentType.empty) ) {
+            while( !cellsContent[coords[0]][coords[1]].equals(Content.empty) ) {
                 snakeHead = random.nextInt(2, nRows*nCols);
                 coords = findCoordinates(snakeHead);
             }
-            cellsContent[coords[0]][coords[1]] = contentType.snakeHead; // assign the snakeHead
+            cellsContent[coords[0]][coords[1]] = Content.snakeHead; // assign the snakeHead
             // snakeTail must be before headPoint
             int snakeTail = random.nextInt(1, snakeHead);
             coords = findCoordinates(snakeTail);
-            while( !cellsContent[coords[0]][coords[1]].equals(contentType.empty) ) {
+            while( !cellsContent[coords[0]][coords[1]].equals(Content.empty) ) {
                 snakeTail = random.nextInt(1, snakeHead);
                 coords = findCoordinates(snakeTail);
             }
-            cellsContent[coords[0]][coords[1]] = contentType.snakeTail; // assign the snakeTail
+            cellsContent[coords[0]][coords[1]] = Content.snakeTail; // assign the snakeTail
             // add snake to snakes list
             snakes.add( new int[]{snakeHead, snakeTail} );
         }
@@ -149,15 +149,6 @@ public class GameBoard {
         }
     } // sets the starting position ov every player
 
-    private void logSnakesAndLaddersPosition() {
-        for (int[] ladder : ladders) {
-            gameLog.append("Ladder: " + ladder[0] + "-" + ladder[1] + "\n");
-        }
-        for (int[] snake : snakes) {
-            gameLog.append("Snake: " + snake[0] + "-" + snake[1] + "\n");
-        }
-    }
-
     private class insertPlayerNamesFrame extends JFrame {
         public insertPlayerNamesFrame(int i) {
 
@@ -185,26 +176,6 @@ public class GameBoard {
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setLayout(new BorderLayout()); // set layout of the container
         } // sets the name, size and layout of the frame
-
-        private JPanel buildBoardPanel() {
-            // create the board with GridLayout
-            JPanel boardPanel = new JPanel(new GridLayout(primaryRules.nRows(), primaryRules.nCols()));
-            cells = new JLabel[primaryRules.nRows()][primaryRules.nCols()]; // create matrix of labels
-            int rows = primaryRules.nRows();
-            int cols = primaryRules.nCols();
-            // fill the board from last to first cell
-            for(int i = 0; i < rows; i++) {
-                for(int j = 0; j < cols; j++) {
-                    int cellLabel = findPosition(i, j); // returns the index of the cell, given the coordinates od the cells matrix
-                    String text = "<html>" + cellLabel + ")</html>";
-                    cells[i][j] = new JLabel(text, SwingConstants.CENTER);
-                    cells[i][j].setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                    //cells[i][j].setOpaque(true); //CONTROLLA POI
-                    boardPanel.add(cells[i][j]);
-                }
-            }
-            return boardPanel;
-        } // builds the panel that contains the cells of the board
 
         private JLabel getCellLabel(int i) {
             int[] cord = findCoordinates(i);
@@ -248,20 +219,21 @@ public class GameBoard {
 
         private JPanel buildSidePanel() {
             JPanel sidePanel = new JPanel();
-            sidePanel.setLayout(new BorderLayout());
-            sidePanel.setPreferredSize(new Dimension(250, getHeight()));
+            sidePanel.setLayout(new GridLayout(2, 1, 10, 10));
+            sidePanel.setPreferredSize(new Dimension(325, getHeight()));
 
             JScrollPane pTable = buildPlayersTable(); // create players table
-            sidePanel.add(pTable, BorderLayout.NORTH); // add the table to the side panel
+            sidePanel.add(pTable); // add the table to the side panel
 
-            JScrollPane logScrollPane = buildGameLog();
-            sidePanel.add(logScrollPane, BorderLayout.CENTER);
+            JScrollPane logScrollPane = buildGameLog(); // create gameLog
+            sidePanel.add(logScrollPane);
 
             return sidePanel;
         } // builds the side panel containing the names table and the game log
 
         private JScrollPane buildGameLog() {
-            gameLog = new JTextArea(); // trova un modo di ingrandirla in altezza
+            gameLog = new JTextArea();
+            gameLog.setFont(gameLog.getFont().deriveFont(17f));
             gameLog.setEditable(false);
             return new JScrollPane(gameLog);
         } // builds a gameLog to show all the game infos
@@ -306,14 +278,15 @@ public class GameBoard {
             boardFrame.repaint();
         } // removes a player from the old cell and adds it to the new one
 
-        private void updatePlayersTableAndGameLog(int playerIndex, int newPosition, contentType event) {
+        private void logPlayerMovement(int playerIndex, int newPosition, Content event) {
             playersTable.setValueAt(newPosition, playerIndex, 2);
-            if(event.equals(contentType.ladderBottom))
-                gameLog.append("Player " + playersTag[playerIndex] + " stepped on a ladder.\n");
-            if(event.equals(contentType.snakeHead))
-                gameLog.append("Player " + playersTag[playerIndex] + " stepped on a snake.\n");
+            if(event.equals(Content.ladderBottom))
+                gameLog.append("Player " + playersTag[playerIndex] + " stepped on a ladder ⤴.\n");
+            if(event.equals(Content.snakeHead))
+                gameLog.append("Player " + playersTag[playerIndex] + " stepped on a snake ⤵.\n");
             gameLog.append("Player " + playersTag[playerIndex] + " moves to cell " + newPosition + ".\n");
         } // updates the position of the player on the playersTable and adds a new log on the gameLog regarding its movement
+
     } // frame that contains the board, the names table and the game log
 
     private class BoardPanel extends JPanel {
@@ -329,7 +302,6 @@ public class GameBoard {
                     String text = "<html>" + cellLabel + ")</html>";
                     cells[i][j] = new JLabel(text, SwingConstants.CENTER);
                     cells[i][j].setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                    //cells[i][j].setOpaque(true); //CONTROLLA POI
                     add(cells[i][j]);
                 }
             }
@@ -338,13 +310,6 @@ public class GameBoard {
         @Override
         protected void paintComponent(Graphics g) {
             drawLaddersAndSnakes(g);
-        }
-
-        private void testDrawing(Graphics g) {
-            Point startPoint = calculateDrawingPoint(1);
-            Point endPoint = calculateDrawingPoint(primaryRules.nRows()*primaryRules.nCols());
-            gameLog.append("Drawing a straight line from "+startPoint+" to "+endPoint+"\n");
-            g.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y); // draws a straight line that represents the ladder
         }
 
         private void drawLaddersAndSnakes(Graphics g) {
@@ -372,19 +337,15 @@ public class GameBoard {
         }
 
         private Point calculateDrawingPoint(int position) {
-            int rows = primaryRules.nRows();
-            int cols = primaryRules.nCols();
             int[] coords = findCoordinates(position);
             int row = coords[0];
             int col = coords[1];
-            // System.out.println("Position:"+position+" row:"+row+" col:"+col); // elimina poi
             // dimensions of each cell
             int cellWidth = cells[row][col].getWidth();
             int cellHeight = cells[row][col].getHeight();
-
+            // pixel coordinates of the point for drawing
             int pixelX = col * cellWidth + cellWidth / 2;
             int pixelY = row * cellHeight  + cellHeight / 2;
-
             return new Point(pixelX, pixelY);
         }
     } // panel that contains the cells of the board
@@ -392,36 +353,76 @@ public class GameBoard {
     private class RollDiceListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            rollDice(contentType.empty);
+            rollDice();
             nextTurn();
         }
 
-        private void rollDice(contentType event){
+        private void rollDice() {
             int currentPlayer = nextPlayer;
-            int newPosition = calculateNewPosition(currentPlayer);
-            movePlayer(currentPlayer, newPosition, event);
+            int currentPosition = playersPosition[currentPlayer];
+            int diceSum;
+            boolean doubleSix = false;
+            if(specialRules.singleDice() && currentPosition >= primaryRules.nRows()*primaryRules.nCols()-6) // if the player is on one of the last 6 cells and the rule singleDice is active
+                diceSum = sumDices(currentPlayer, 1);
+            else
+                diceSum = sumDices(currentPlayer, primaryRules.nDices());
+            if(specialRules.doubleSix() && diceSum == 12) { // if the rule doubleSix is active
+                gameLog.append("Player " + playersTag[currentPlayer] + " got a double six!" + diceSum + ".\n");
+                doubleSix = true;
+            }
+            int newPosition = calculateNewPosition(currentPlayer, diceSum);
+            movePlayer(currentPlayer, newPosition, Content.empty);
+            checkTile(currentPlayer, newPosition); // check for snakes, ladders, special tiles or final cell
+            if(doubleSix) {
+                rollDice(); // if the player got a double six, he must roll again
+            }
         }
 
-        private int calculateNewPosition(int currentPlayer) {
-            // roll the dices
+        private int sumDices(int currentPlayer, int nDices) {
+            Random rand = new Random();
             int diceSum = 0; // sums the total of nDices
-            for (int i = 0; i < primaryRules.nDices(); i++) {
-                diceSum += (int) (Math.random()*7);
+            StringBuilder visualResult = new StringBuilder();
+            for (int i = 0; i < nDices; i++) {
+                int res = rand.nextInt(1,7);
+                diceSum += res;
+                switch (res) {
+                    case 1:
+                        visualResult.append("⚀");
+                        break;
+                    case 2:
+                        visualResult.append("⚁");
+                        break;
+                    case 3:
+                        visualResult.append("⚂");
+                        break;
+                    case 4:
+                        visualResult.append("⚃");
+                        break;
+                    case 5:
+                        visualResult.append("⚄");
+                        break;
+                    default:
+                        visualResult.append("⚅");
+                        break;
+                }
             }
-            // calculate the new position
+            gameLog.append("Player " + playersTag[currentPlayer] + " got a " + diceSum + visualResult + ".\n");
+            return diceSum;
+        }
+
+        private int calculateNewPosition(int currentPlayer, int diceSum) {
             int currentPosition = playersPosition[currentPlayer];
             int newPosition = currentPosition + diceSum;
             int finalCell = primaryRules.nRows()*primaryRules.nCols();
-            if (newPosition > finalCell) { // manage overshoot
+            if (newPosition > finalCell) { // the last cell must be reached with an exact shot
                 newPosition = finalCell - (newPosition - finalCell);
             }
             return newPosition;
         }
 
-        private void movePlayer(int currentPlayer, int newPosition, contentType event) {
+        private void movePlayer(int currentPlayer, int newPosition, Content event) {
             boardFrame.updatePlayerPosition(currentPlayer, newPosition);
-            boardFrame.updatePlayersTableAndGameLog(currentPlayer, newPosition, event);
-            checkTile(currentPlayer, newPosition); // check for snakes, ladders, special tiles or final cell
+            boardFrame.logPlayerMovement(currentPlayer, newPosition, event);
         }
 
         private void checkTile(int currentPlayer, int position) {
@@ -429,15 +430,15 @@ public class GameBoard {
             int[] coords = findCoordinates(position);
             if(position == finalCell) {
                 endGame(currentPlayer);
-            } else if(cellsContent[coords[0]][coords[1]].equals(contentType.ladderBottom)) {
+            } else if(cellsContent[coords[0]][coords[1]].equals(Content.ladderBottom)) {
                 for(int[] ladder : ladders) {
                     if (ladder[0] == position)
-                        movePlayer(currentPlayer, ladder[1], contentType.ladderBottom);
+                        movePlayer(currentPlayer, ladder[1], Content.ladderBottom);
                 }
-            } else if(cellsContent[coords[0]][coords[1]].equals(contentType.snakeHead)) {
+            } else if(cellsContent[coords[0]][coords[1]].equals(Content.snakeHead)) {
                 for(int[] snake : snakes) {
                     if(snake[0] == position)
-                        movePlayer(currentPlayer, snake[1], contentType.snakeHead);
+                        movePlayer(currentPlayer, snake[1], Content.snakeHead);
                 }
             }
         }

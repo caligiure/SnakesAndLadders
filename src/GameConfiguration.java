@@ -194,11 +194,13 @@ public class GameConfiguration {
             // Rules fields
             autoAdvanceCheckBox = new JCheckBox("Automatically roll the dices and advance", specialRules.autoAdvance());
             singleDiceCheckBox = new JCheckBox("Use a single dice in the last 6 tiles", specialRules.singleDice());
-            if( primaryRules.nDices() < 2 ) {
+            doubleSixCheckBox = new JCheckBox("Double Roll if you get Double Six", specialRules.doubleSix());
+            if( primaryRules.nDices() < 2 ) { // rules not compatible with the use of a single dice
                 singleDiceCheckBox.setEnabled(false);
                 singleDiceCheckBox.setSelected(false);
+                doubleSixCheckBox.setEnabled(false);
+                doubleSixCheckBox.setSelected(false);
             }
-            doubleSixCheckBox = new JCheckBox("Double Roll if you get Double Six", specialRules.doubleSix());
             stopTilesCheckBox = new JCheckBox("Add Stopping tiles: bench stops you for 1 turn, tavern stops you for 3 turns", specialRules.stopTiles());
             moveAgainCheckBox = new JCheckBox("Add special tiles that let you move again without rolling the dice", specialRules.moveAgainTiles());
             rollAgainCheckBox = new JCheckBox("Add special tiles that let you roll the dice again", specialRules.rollAgainTiles());
