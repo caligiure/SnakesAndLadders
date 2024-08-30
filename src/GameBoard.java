@@ -348,23 +348,26 @@ public class GameBoard {
         }
 
         private void drawLaddersAndSnakes(Graphics g) {
-            // Draw ladders
+            // Draw green ladders
             g.setColor(Color.GREEN);
             for (int[] ladder : ladders) {
-                Point startPoint = calculateDrawingPoint(ladder[0]);
-                Point endPoint = calculateDrawingPoint(ladder[1]);
-                g.drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y); // draws a straight line that represents the ladder
-                //g.drawLine();
+                Point bottomPoint = calculateDrawingPoint(ladder[0]); // bottom
+                Point topPoint = calculateDrawingPoint(ladder[1]); // top
+                // draw 2 straight line that represent the ladder
+                g.drawLine(bottomPoint.x-10, bottomPoint.y, topPoint.x-10, topPoint.y);
+                g.drawLine(bottomPoint.x+10, bottomPoint.y, topPoint.x+10, topPoint.y);
+                g.fillRect(bottomPoint.x-10, bottomPoint.y-1, 20, 10);
+                g.fillRect(topPoint.x-10, topPoint.y-1, 20, 10);
             }
-            // Draw snakes
+            // Draw red snakes
             g.setColor(Color.RED);
             for (int[] snake : snakes) {
-                Point startPoint = calculateDrawingPoint(snake[0]);
-                Point endPoint = calculateDrawingPoint(snake[1]);
-                // draws an arc line that represents the snake
-                g.drawArc(startPoint.x, startPoint.y, endPoint.x - startPoint.x, endPoint.y - startPoint.y, 0, 180);
-                // draws an oval that represents the snake
-                g.fillOval(startPoint.x - 10, startPoint.y - 10, 20, 20);
+                Point headPoint  = calculateDrawingPoint(snake[0]);
+                Point tailPoint = calculateDrawingPoint(snake[1]);
+                // draw 2 straight line that represent the snake
+                g.drawLine(tailPoint.x-10, tailPoint.y, headPoint.x-10, headPoint.y);
+                g.drawLine(tailPoint.x+10, tailPoint.y, headPoint.x+10, headPoint.y);
+                g.fillOval(headPoint.x-10, headPoint.y-2, 20, 12);
             }
         }
 
