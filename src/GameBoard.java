@@ -306,6 +306,12 @@ public class GameBoard {
                     String text = "<html>" + cellLabel + ")</html>";
                     cells[i][j] = new JLabel(text, SwingConstants.CENTER);
                     cells[i][j].setBorder(BorderFactory.createLineBorder(Color.BLACK));
+                    if(cellsContent[i][j].equals(Content.rollAgain))
+                        cells[i][j].setBackground(Color.BLUE);
+                    if(cellsContent[i][j].equals(Content.moveAgain))
+                        cells[i][j].setBackground(Color.CYAN);
+                    if(cellsContent[i][j].equals(Content.stop))
+                        cells[i][j].setBackground(Color.MAGENTA);
                     add(cells[i][j]);
                 }
             }
