@@ -3,7 +3,6 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.List;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -24,11 +23,11 @@ public class GameBoard {
     private DefaultTableModel playersTable;  // shows ID, name and position of every player
     private JTextArea gameLog;  // Text area for gameLog
     // snakes, ladders and special cells
-    private List<int[]> ladders; // bottom and top position of every ladder
-    private List<int[]> snakes; // head and tail position of every snake
+    private LinkedList<int[]> ladders; // bottom and top position of every ladder
+    private LinkedList<int[]> snakes; // head and tail position of every snake
     private Content[][] cellsContent; // the type of content of every cell
     private enum Content {
-        empty, ladderBottom, ladderTop, snakeHead, snakeTail
+        empty, ladderBottom, ladderTop, snakeHead, snakeTail, stop, moveAgain, rollAgain, drawCard
     }
 
     public GameBoard(PrimaryRulesRecord primaryRules, SpecialRulesRecord specialRules) {
@@ -38,13 +37,12 @@ public class GameBoard {
         playersName = new String[primaryRules.nPlayers()]; // da cambiare con l'inserimento dei nomi
         initializePlayersTag();
 
-        initializeLaddersAndSnakesAndSpecials();
+        initializeCellsContent();
 
         boardFrame = new BoardFrame();
         boardFrame.setVisible(true);
 
         initializePlayersPosition();
-        // logSnakesAndLaddersPosition(); // elimina poi
         gameLog.append("Next Player: " + playersTag[0] + ".\n");
     }
 
@@ -57,60 +55,69 @@ public class GameBoard {
         playersPosition = new int[primaryRules.nPlayers()];
     } // sets a tag for every player, which will be displayed on the board
 
-    private void initializeLaddersAndSnakesAndSpecials() {
-        Random random = new Random();
+    private void initializeCellsContent() {
         int nRows = primaryRules.nRows();
         int nCols = primaryRules.nCols();
         ladders = new LinkedList<>();
         snakes = new LinkedList<>();
-        cellsContent = new Content[nRows][nCols]; // snakes, ladders and special cells
+        cellsContent = new Content[nRows][nCols]; // contains snakes, ladders and special cells
         for(int i = 0; i < primaryRules.nRows(); i++) {
             for(int j = 0; j < primaryRules.nCols(); j++) {
-                cellsContent[i][j]= Content.empty;
+                cellsContent[i][j]= Content.empty; // initialize every cell as empty
             }
         }
         // choose randomly the bottom and top point of every ladder, avoiding the cells that already contain something
         // the first and last cell of the board cannot contain ladders
         for(int i=0; i<primaryRules.nLadders(); i++) {
-            int ladderBottom = random.nextInt(2, nRows*nCols-1); // the second-last cell can't contain the bottom of a ladder
-            int[] coords = findCoordinates(ladderBottom);
-            while( !cellsContent[coords[0]][coords[1]].equals(Content.empty) ) { // checks if the cell is empty
-                ladderBottom = random.nextInt(2, nRows*nCols-1);
-                coords = findCoordinates(ladderBottom);
-            }
-            cellsContent[coords[0]][coords[1]] = Content.ladderBottom; // assign the ladderBottom
-            // ladderTop must be after startingPoint
-            int ladderTop = random.nextInt(ladderBottom+1, nRows*nCols);
-            coords = findCoordinates(ladderTop);
-            while( !cellsContent[coords[0]][coords[1]].equals(Content.empty) ) { // checks if the cell is empty
-                ladderTop = random.nextInt(ladderBottom+1, nRows*nCols);
-                coords = findCoordinates(ladderTop);
-            }
-            cellsContent[coords[0]][coords[1]] = Content.ladderTop; // assign the ladderTop
-            // add ladder to ladders list
-            ladders.add( new int[]{ladderBottom, ladderTop} );
+            int ladderBottom = putInRandomEmptyPosition(2, nRows*nCols-1, Content.ladderBottom); // the second-last cell can't contain the bottom of a ladder
+            int ladderTop = putInRandomEmptyPosition(ladderBottom+1, nRows*nCols, Content.ladderTop); // ladderTop must be after startingPoint
+            ladders.add( new int[]{ladderBottom, ladderTop} ); // add ladder to ladders list
         }
         // choose randomly the head and tail point of every snake, avoiding the cells that already contain something
         for(int i=0; i<primaryRules.nSnakes(); i++) {
-            int snakeHead = random.nextInt(2, nRows*nCols); // the first and final cells cannot be a head point for a snake
-            int[] coords = findCoordinates(snakeHead);
-            while( !cellsContent[coords[0]][coords[1]].equals(Content.empty) ) {
-                snakeHead = random.nextInt(2, nRows*nCols);
-                coords = findCoordinates(snakeHead);
-            }
-            cellsContent[coords[0]][coords[1]] = Content.snakeHead; // assign the snakeHead
-            // snakeTail must be before headPoint
-            int snakeTail = random.nextInt(1, snakeHead);
-            coords = findCoordinates(snakeTail);
-            while( !cellsContent[coords[0]][coords[1]].equals(Content.empty) ) {
-                snakeTail = random.nextInt(1, snakeHead);
-                coords = findCoordinates(snakeTail);
-            }
-            cellsContent[coords[0]][coords[1]] = Content.snakeTail; // assign the snakeTail
-            // add snake to snakes list
-            snakes.add( new int[]{snakeHead, snakeTail} );
+            int snakeHead = putInRandomEmptyPosition(2, nRows*nCols, Content.snakeHead); // the first and final cells cannot be a head point for a snake
+            int snakeTail = putInRandomEmptyPosition(1, snakeHead, Content.snakeTail); // snakeTail must be before headPoint
+            snakes.add( new int[]{snakeHead, snakeTail} ); // add snake to snakes list
         }
-    } // chooses randomly the position of every ladder and snake
+        // initialize special Cells
+        int numOfSpecialCellsPerType = getNumOfSpecialCellsPerType(nRows, nCols); // there are four types of special cells
+        for(int i=0; i<numOfSpecialCellsPerType; i++) {
+            if(specialRules.stopTiles()) { // a type of content must be added only if the relative rule is active
+                putInRandomEmptyPosition(2, nRows*nCols, Content.stop); // first and last cell can't contain a special item
+            }
+            if(specialRules.moveAgainTiles()) {
+                putInRandomEmptyPosition(2, nRows*nCols, Content.moveAgain);
+            }
+            if(specialRules.rollAgainTiles()) {
+                putInRandomEmptyPosition(2, nRows*nCols, Content.rollAgain);
+            }
+            if(specialRules.addCards()) {
+                putInRandomEmptyPosition(2, nRows*nCols, Content.drawCard);
+            }
+        }
+    } // initialize the content of every cell (snake, ladder, special cells)
+
+    private int putInRandomEmptyPosition(int origin, int bound, Content content){
+        Random random = new Random();
+        int position = random.nextInt(origin, bound);
+        int[] coords = findCoordinates(position);
+        while ( !cellsContent[coords[0]][coords[1]].equals(Content.empty) ) {
+            position = random.nextInt(origin, bound);
+            coords = findCoordinates(position);
+        }
+        cellsContent[coords[0]][coords[1]] = content;
+        return position;
+    } // chooses a random empty cell and puts the specified content inside it, then returns the position of the cell
+
+    private int getNumOfSpecialCellsPerType(int nRows, int nCols) {
+        int percentageOfSpecialCells = ((nRows * nCols) / 100)*40; // the board will contain at max 40% of special cells
+        int numOfEmptyCells =  nRows * nCols - (primaryRules.nSnakes()+primaryRules.nLadders()) * 2 - 2;
+        int maxNumOfSpecialCells = percentageOfSpecialCells;
+        if (numOfEmptyCells < maxNumOfSpecialCells) {
+            maxNumOfSpecialCells = numOfEmptyCells;
+        }
+        return maxNumOfSpecialCells / 4; // there are four types of special cells
+    }
 
     private int[] findCoordinates(int position) {
         int rows = primaryRules.nRows();
@@ -147,7 +154,7 @@ public class GameBoard {
             playersPosition[i] = 1; // the starting point for every player is cell 1
             boardFrame.updatePlayerPosition(i, 1);
         }
-    } // sets the starting position ov every player
+    } // sets the starting position of every player
 
     private class insertPlayerNamesFrame extends JFrame {
         public insertPlayerNamesFrame(int i) {
