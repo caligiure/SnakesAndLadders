@@ -29,6 +29,7 @@ public class GameBoard {
     private enum Content {
         empty, ladderBottom, ladderTop, snakeHead, snakeTail, stop, moveAgain, rollAgain, drawCard
     }
+    private final LinkedList<Integer> stoppedPlayers = new LinkedList<>(); // players that are currently stopped
 
     public GameBoard(PrimaryRulesRecord primaryRules, SpecialRulesRecord specialRules) {
         this.primaryRules = primaryRules;
@@ -285,12 +286,8 @@ public class GameBoard {
             boardFrame.repaint();
         } // removes a player from the old cell and adds it to the new one
 
-        private void logPlayerMovement(int playerIndex, int newPosition, Content event) {
+        private void logPlayerMovement(int playerIndex, int newPosition) {
             playersTable.setValueAt(newPosition, playerIndex, 2);
-            if(event.equals(Content.ladderBottom))
-                gameLog.append("Player " + playersTag[playerIndex] + " stepped on a ladder ⤴.\n");
-            if(event.equals(Content.snakeHead))
-                gameLog.append("Player " + playersTag[playerIndex] + " stepped on a snake ⤵.\n");
             gameLog.append("Player " + playersTag[playerIndex] + " moves to cell " + newPosition + ".\n");
         } // updates the position of the player on the playersTable and adds a new log on the gameLog regarding its movement
 
@@ -369,19 +366,24 @@ public class GameBoard {
             int currentPosition = playersPosition[currentPlayer];
             int diceSum;
             boolean doubleSix = false;
-            if(specialRules.singleDice() && currentPosition >= primaryRules.nRows()*primaryRules.nCols()-6) // if the player is on one of the last 6 cells and the rule singleDice is active
-                diceSum = sumDices(currentPlayer, 1);
-            else
-                diceSum = sumDices(currentPlayer, primaryRules.nDices());
-            if(specialRules.doubleSix() && diceSum == 12) { // if the rule doubleSix is active
-                gameLog.append("Player " + playersTag[currentPlayer] + " got a double six!" + diceSum + ".\n");
-                doubleSix = true;
-            }
-            int newPosition = calculateNewPosition(currentPlayer, diceSum);
-            movePlayer(currentPlayer, newPosition, Content.empty);
-            checkTile(currentPlayer, newPosition); // check for snakes, ladders, special tiles or final cell
-            if(doubleSix) {
-                rollDice(); // if the player got a double six, he must roll again
+            if(stoppedPlayers.contains(currentPlayer)) {
+                gameLog.append("Player " + playersTag[currentPlayer] + " is stopped and will play on the next turn.\n");
+                stoppedPlayers.remove(currentPlayer);
+            } else {
+                if (specialRules.singleDice() && currentPosition >= primaryRules.nRows() * primaryRules.nCols() - 6) // if the player is on one of the last 6 cells and the rule singleDice is active
+                    diceSum = sumDices(currentPlayer, 1);
+                else
+                    diceSum = sumDices(currentPlayer, primaryRules.nDices());
+                if (specialRules.doubleSix() && diceSum == 12) { // if the rule doubleSix is active
+                    gameLog.append("Player " + playersTag[currentPlayer] + " got a double six!" + diceSum + ".\n");
+                    doubleSix = true;
+                }
+                int newPosition = calculateNewPosition(currentPlayer, diceSum);
+                movePlayer(currentPlayer, newPosition);
+                checkTile(currentPlayer, newPosition, diceSum); // check for snakes, ladders, special tiles or final cell
+                if (doubleSix) {
+                    rollDice(); // if the player got a double six, he must roll again
+                }
             }
         }
 
@@ -427,26 +429,41 @@ public class GameBoard {
             return newPosition;
         }
 
-        private void movePlayer(int currentPlayer, int newPosition, Content event) {
+        private void movePlayer(int currentPlayer, int newPosition) {
             boardFrame.updatePlayerPosition(currentPlayer, newPosition);
-            boardFrame.logPlayerMovement(currentPlayer, newPosition, event);
+            boardFrame.logPlayerMovement(currentPlayer, newPosition);
         }
 
-        private void checkTile(int currentPlayer, int position) {
+        private void checkTile(int currentPlayer, int position, int diceSum) {
             int finalCell = primaryRules.nRows()*primaryRules.nCols();
             int[] coords = findCoordinates(position);
             if(position == finalCell) {
                 endGame(currentPlayer);
             } else if(cellsContent[coords[0]][coords[1]].equals(Content.ladderBottom)) {
                 for(int[] ladder : ladders) {
-                    if (ladder[0] == position)
-                        movePlayer(currentPlayer, ladder[1], Content.ladderBottom);
+                    if (ladder[0] == position){
+                        gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a ladder ⤴.\n");
+                        movePlayer(currentPlayer, ladder[1]);
+                    }
+
                 }
             } else if(cellsContent[coords[0]][coords[1]].equals(Content.snakeHead)) {
                 for(int[] snake : snakes) {
-                    if(snake[0] == position)
-                        movePlayer(currentPlayer, snake[1], Content.snakeHead);
+                    if(snake[0] == position) {
+                        gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a snake ⤵.\n");
+                        movePlayer(currentPlayer, snake[1]);
+                    }
                 }
+            } else if(cellsContent[coords[0]][coords[1]].equals(Content.rollAgain)) {
+                gameLog.append("Player " + playersTag[currentPlayer] + " must roll again!\n");
+                rollDice();
+            } else if(cellsContent[coords[0]][coords[1]].equals(Content.moveAgain)) {
+                gameLog.append("Player " + playersTag[currentPlayer] + " must move again!\n");
+                int newPosition = calculateNewPosition(currentPlayer, diceSum);
+                movePlayer(currentPlayer, newPosition);
+            } else if(cellsContent[coords[0]][coords[1]].equals(Content.stop)) {
+                gameLog.append("Player " + playersTag[currentPlayer] + " is stopped for a turn!\n");
+                stoppedPlayers.add(currentPlayer);
             }
         }
 
