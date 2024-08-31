@@ -277,7 +277,7 @@ public class GameConfiguration {
             );
 
             this.setVisible(false);
-            new GameBoard(primaryRules, specialRules); // creates the board
+            new Game(primaryRules, specialRules); // creates the board
             configFrame.dispose();
             primaryRulesFrame.dispose();
             this.dispose();

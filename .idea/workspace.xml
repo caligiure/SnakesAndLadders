@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Starting to work on color's legend">
+    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Legend is complete">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GameBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameBoard.java" afterDir="false" />
     </list>
@@ -138,7 +138,7 @@
       <workItem from="1724741147674" duration="45297000" />
       <workItem from="1724923039623" duration="53628000" />
       <workItem from="1725089462859" duration="9270000" />
-      <workItem from="1725102539005" duration="10043000" />
+      <workItem from="1725102539005" duration="12738000" />
     </task>
     <task id="LOCAL-00001" summary="The board gridLayout is working!">
       <option name="closed" value="true" />
@@ -372,7 +372,15 @@
       <option name="project" value="LOCAL" />
       <updated>1725117472463</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="Legend is complete">
+      <option name="closed" value="true" />
+      <created>1725119978800</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1725119978800</updated>
+    </task>
+    <option name="localTasksCounter" value="31" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -380,7 +388,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="work in progress on &quot;ConfigGame&quot;" />
     <MESSAGE value="First and Second configuration Frames done" />
     <MESSAGE value="Work in progress in configGame" />
     <MESSAGE value="The class GameConfiguration is complete" />
@@ -405,7 +412,8 @@
     <MESSAGE value="Drawing cards" />
     <MESSAGE value="Drawing cards is complete" />
     <MESSAGE value="Starting to work on color's legend" />
-    <option name="LAST_COMMIT_MESSAGE" value="Starting to work on color's legend" />
+    <MESSAGE value="Legend is complete" />
+    <option name="LAST_COMMIT_MESSAGE" value="Legend is complete" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
