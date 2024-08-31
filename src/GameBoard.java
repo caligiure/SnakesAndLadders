@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.Random;
 
-// Da fare: inserimento nomi, leggenda colori special cells, autoAdvance, rules, crea eseguibili
+// Da fare: inserimento nomi, autoAdvance, rules, crea eseguibili
 
 public class GameBoard {
     // Game Rules and Settings
@@ -15,7 +15,6 @@ public class GameBoard {
     // Game Board
     private final BoardFrame boardFrame;
     private JLabel[][] cells;
-    private RollDiceListener rollDiceListener;
     // Players
     private String[] playersTag;
     private final String[] playersName;
@@ -29,7 +28,7 @@ public class GameBoard {
     private LinkedList<int[]> snakes; // head and tail position of every snake
     private Content[][] cellsContent; // the type of content of every cell
     private enum Content {
-        empty, ladderBottom, ladderTop, snakeHead, snakeTail, stop, moveAgain, rollAgain, drawCard;
+        empty, ladderBottom, ladderTop, snakeHead, snakeTail, stop, moveAgain, rollAgain, drawCard
     }
     private final LinkedList<Integer> stoppedPlayers = new LinkedList<>(); // players that are currently stopped
     private final LinkedList<Integer> denyStopPlayers = new LinkedList<>(); // players that are currently holding a denyStop card
@@ -206,7 +205,7 @@ public class GameBoard {
             // add a button to roll the dice (only if autoAdvance is off)
             if( !specialRules.autoAdvance() ) {
                 JButton rollButton = new JButton("Roll Dice");
-                rollDiceListener = new RollDiceListener();
+                RollDiceListener rollDiceListener = new RollDiceListener();
                 rollButton.addActionListener(rollDiceListener);
                 buttonsPanel.add(rollButton);
             }
@@ -230,11 +229,14 @@ public class GameBoard {
 
         private JPanel buildSidePanel() {
             JPanel sidePanel = new JPanel();
-            sidePanel.setLayout(new GridLayout(2, 1, 10, 10));
-            sidePanel.setPreferredSize(new Dimension(325, getHeight()));
+            sidePanel.setLayout(new GridLayout(3, 1, 10, 10));
+            sidePanel.setPreferredSize(new Dimension(350, getHeight()));
 
             JScrollPane pTable = buildPlayersTable(); // create players table
             sidePanel.add(pTable); // add the table to the side panel
+
+            JScrollPane legendTable = buildLegendTable(); // create legend table
+            sidePanel.add(legendTable);
 
             JScrollPane logScrollPane = buildGameLog(); // create gameLog
             sidePanel.add(logScrollPane);
@@ -242,15 +244,7 @@ public class GameBoard {
             return sidePanel;
         } // builds the side panel containing the names table and the game log
 
-        private JScrollPane buildGameLog() {
-            gameLog = new JTextArea();
-            gameLog.setFont(gameLog.getFont().deriveFont(17f));
-            gameLog.setEditable(false);
-            return new JScrollPane(gameLog);
-        } // builds a gameLog to show all the game infos
-
         private JScrollPane buildPlayersTable() {
-            // Side table with players ID and name
             String[] columnNames = {"Tag", "Name", "Position"};
             Object[][] data = new Object[primaryRules.nPlayers()][3];
             for (int i = 0; i < primaryRules.nPlayers(); i++) {
@@ -260,8 +254,32 @@ public class GameBoard {
             }
             playersTable = new DefaultTableModel(data, columnNames);
             JTable table = new JTable(playersTable); // contains the default table model
+            table.setDefaultEditor(Object.class, null);
             return new JScrollPane(table); // JScrollPane makes the table scrollable
-        } // builds a player to show every player's tag, name and position
+        } // builds a player table to show every player's tag, name and position
+
+        private JScrollPane buildLegendTable() {
+            String[] columnNames = {"Color", "Meaning"};
+            String[][] data = new String[7][2];
+            data[0][0] = "BLUE"; data[0][1] = "Roll Again ↺⚀⚅";
+            data[1][0] = "CYAN"; data[1][1] = "Move Again ⏩";
+            data[2][0] = "MAGENTA"; data[2][1] = "Stop ❌⏳";
+            data[3][0] = "YELLOW"; data[3][1] = "Draw card ♠♣♥♦";
+            data[4][0] = "RED"; data[4][1] = "Snake ⏬";
+            data[5][0] = "GREEN"; data[5][1] = "Ladder ⏫";
+            data[6][0] = "DENY STOP"; data[6][1] = "Denies a Stop Tile or a Stop Card ✋";
+            DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
+            JTable table = new JTable(tableModel); // contains the default table model
+            table.setDefaultEditor(Object.class, null);
+            return new JScrollPane(table); // JScrollPane makes the table scrollable
+        } // builds a legend table to show the meaning of each color
+
+        private JScrollPane buildGameLog() {
+            gameLog = new JTextArea();
+            gameLog.setFont(gameLog.getFont().deriveFont(17f));
+            gameLog.setEditable(false);
+            return new JScrollPane(gameLog);
+        } // builds a gameLog to show all the game infos
 
         private void updatePlayerPosition(int playerIndex, int newPosition) {
             // remove player from the old cell
