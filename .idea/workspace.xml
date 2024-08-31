@@ -4,11 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Coloring cells">
+    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Drawing cards">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GameBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameBoard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/GameConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/SpecialRulesRecord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SpecialRulesRecord.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -139,7 +137,8 @@
       <workItem from="1724668105867" duration="15005000" />
       <workItem from="1724741147674" duration="45297000" />
       <workItem from="1724923039623" duration="53628000" />
-      <workItem from="1725089462859" duration="7636000" />
+      <workItem from="1725089462859" duration="9270000" />
+      <workItem from="1725102539005" duration="7058000" />
     </task>
     <task id="LOCAL-00001" summary="The board gridLayout is working!">
       <option name="closed" value="true" />
@@ -349,7 +348,15 @@
       <option name="project" value="LOCAL" />
       <updated>1725046213647</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Drawing cards">
+      <option name="closed" value="true" />
+      <created>1725098193069</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1725098193069</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -357,7 +364,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="The board gridLayout is working!" />
     <MESSAGE value="The board gridLayout is working" />
     <MESSAGE value="work in progress on &quot;StartGame&quot;" />
     <MESSAGE value="work in progress on &quot;ConfigGame&quot;" />
@@ -382,7 +388,8 @@
     <MESSAGE value="Adding special cells" />
     <MESSAGE value="Managing stopped players" />
     <MESSAGE value="Coloring cells" />
-    <option name="LAST_COMMIT_MESSAGE" value="Coloring cells" />
+    <MESSAGE value="Drawing cards" />
+    <option name="LAST_COMMIT_MESSAGE" value="Drawing cards" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

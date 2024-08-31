@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.Random;
 
+// Da fare: inserimento nomi, leggenda colori special cells, autoAdvance, rules
+
 public class GameBoard {
     // Game Rules and Settings
     private final PrimaryRulesRecord primaryRules;
@@ -27,9 +29,10 @@ public class GameBoard {
     private LinkedList<int[]> snakes; // head and tail position of every snake
     private Content[][] cellsContent; // the type of content of every cell
     private enum Content {
-        empty, ladderBottom, ladderTop, snakeHead, snakeTail, stop, moveAgain, rollAgain, drawCard, denyStop
+        empty, ladderBottom, ladderTop, snakeHead, snakeTail, stop, moveAgain, rollAgain, drawCard;
     }
     private final LinkedList<Integer> stoppedPlayers = new LinkedList<>(); // players that are currently stopped
+    private final LinkedList<Integer> denyStopPlayers = new LinkedList<>(); // players that are currently holding a denyStop card
 
     public GameBoard(PrimaryRulesRecord primaryRules, SpecialRulesRecord specialRules) {
         this.primaryRules = primaryRules;
@@ -361,7 +364,7 @@ public class GameBoard {
             for (int row = 0; row < primaryRules.nRows(); row++) {
                 for (int col = 0; col < primaryRules.nCols(); col++) {
                     Content content = cellsContent[row][col];
-                    if( !(content.equals(Content.empty)) && !(content.equals(Content.denyStop)) ) {
+                    if( !(content.equals(Content.empty)) ) {
                         Point center = calculateDrawingPoint(findPosition(row, col));
                         if (content.equals(Content.rollAgain))
                             g.setColor(Color.BLUE);
@@ -492,29 +495,50 @@ public class GameBoard {
                 movePlayer(currentPlayer, newPosition);
             } else if(cellsContent[coords[0]][coords[1]].equals(Content.stop)) {
                 gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a stop tile!❌\n");
-                gameLog.append("Player " + playersTag[currentPlayer] + " is stopped for 1 turn!⏳\n");
-                stoppedPlayers.add(currentPlayer);
+                if(denyStopPlayers.contains(currentPlayer)){
+                    gameLog.append("Player " + playersTag[currentPlayer] + " uses a deny stop card to avoid getting stopped!✋\n");
+                    denyStopPlayers.removeFirstOccurrence(currentPlayer);
+                } else {
+                    gameLog.append("Player " + playersTag[currentPlayer] + " is stopped for 1 turn!⏳\n");
+                    stoppedPlayers.add(currentPlayer);
+                }
             } else if(cellsContent[coords[0]][coords[1]].equals(Content.drawCard)) {
                 gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a card tile!♠♣♥♦\n");
-                Content card = drawCard();
-                gameLog.append("Player " + playersTag[currentPlayer] + " draws a \n");
+                drawCard(currentPlayer, diceSum);
             }
         }
 
-        private Content drawCard() {
+        private void drawCard(int currentPlayer, int diceSum) {
             Random rand = new Random();
             int card; // there are 4 types of card: stop(0), moveAgain(1), rollAgain(2), denyStop(3)
             if(specialRules.denyStopCard()) // if the rule isn't active the card denyStop can't be drawn
-                card=rand.nextInt(0, 4);
+                card = rand.nextInt(0, 4);
             else
-                card=rand.nextInt(0, 3);
-            return switch (card) {
-                case 0 -> Content.stop;
-                case 1 -> Content.moveAgain;
-                case 2 -> Content.rollAgain;
-                default -> Content.denyStop;
-            };
-        }
+                card = rand.nextInt(0, 3);
+            if(card == 0) {
+                gameLog.append("Player " + playersTag[currentPlayer] + " draws a stop card!❌\n");
+                if(denyStopPlayers.contains(currentPlayer)){
+                    gameLog.append("Player " + playersTag[currentPlayer] + " uses a deny stop card to avoid getting stopped!✋\n");
+                    denyStopPlayers.removeFirstOccurrence(currentPlayer);
+                } else {
+                    gameLog.append("Player " + playersTag[currentPlayer] + " is stopped for 1 turn!⏳\n");
+                    stoppedPlayers.add(currentPlayer);
+                }
+            } else if(card == 1) {
+                gameLog.append("Player " + playersTag[currentPlayer] + " draws a move again card!⏩\n");
+                gameLog.append("Player " + playersTag[currentPlayer] + " must move again!⏩\n");
+                int newPosition = calculateNewPosition(currentPlayer, diceSum);
+                movePlayer(currentPlayer, newPosition);
+            } else if(card == 2) {
+                gameLog.append("Player " + playersTag[currentPlayer] + " draws a roll again card!↺⚀⚅\n");
+                gameLog.append("Player " + playersTag[currentPlayer] + " must roll again!↺⚀⚅\n");
+                rollDice();
+            } else {
+                gameLog.append("Player " + playersTag[currentPlayer] + " draws a deny stop card!✋\n");
+                gameLog.append("Player " + playersTag[currentPlayer] + " will hold this card until needed!✋\n");
+                denyStopPlayers.add(currentPlayer);
+            }
+        } // draws a card randomly
 
         private void endGame(int currentPlayer) {
             String winnerMessage = playersName[currentPlayer] + " (Player " + playersTag[currentPlayer] + ") wins the game!";
