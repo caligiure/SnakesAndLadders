@@ -6,7 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.Random;
 
-// Da fare: inserimento nomi, leggenda colori special cells, autoAdvance, rules
+// Da fare: inserimento nomi, leggenda colori special cells, autoAdvance, rules, crea eseguibili
 
 public class GameBoard {
     // Game Rules and Settings
