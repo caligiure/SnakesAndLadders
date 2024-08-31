@@ -180,7 +180,7 @@ public class GameConfiguration {
         private final JCheckBox moveAgainCheckBox;
         private final JCheckBox rollAgainCheckBox;
         private final JCheckBox addCardsCheckBox;
-        private final JCheckBox dontStopCardCheckBox;
+        private final JCheckBox denyStopCardCheckBox;
 
         public SpecialRulesFrame() {
             // Set the JFrame
@@ -205,10 +205,10 @@ public class GameConfiguration {
             moveAgainCheckBox = new JCheckBox("Add special tiles that let you move again without rolling the dice", specialRules.moveAgainTiles());
             rollAgainCheckBox = new JCheckBox("Add special tiles that let you roll the dice again", specialRules.rollAgainTiles());
             addCardsCheckBox = new JCheckBox("Add special tiles that let you draw a card", specialRules.addCards());
-            dontStopCardCheckBox = new JCheckBox("Add a special card that you can keep to avoid getting stopped", specialRules.dontStopCard());
+            denyStopCardCheckBox = new JCheckBox("Add a denyStop card that you can keep to avoid getting stopped", specialRules.denyStopCard());
             if( !addCardsCheckBox.isSelected() ) {
-                dontStopCardCheckBox.setEnabled(false);
-                dontStopCardCheckBox.setSelected(false);
+                denyStopCardCheckBox.setEnabled(false);
+                denyStopCardCheckBox.setSelected(false);
             }
             addCardsCheckBox.addActionListener(e -> manageButtonDontStopCard());
             JButton startButton = new JButton("Start game");
@@ -225,7 +225,7 @@ public class GameConfiguration {
             panel.add(moveAgainCheckBox);
             panel.add(rollAgainCheckBox);
             panel.add(addCardsCheckBox);
-            panel.add(dontStopCardCheckBox);
+            panel.add(denyStopCardCheckBox);
             panel.add(startButton);
             panel.add(saveButton);
             panel.add(backButton);
@@ -233,9 +233,9 @@ public class GameConfiguration {
         }
 
         private void manageButtonDontStopCard() {
-            dontStopCardCheckBox.setEnabled( addCardsCheckBox.isSelected() );
+            denyStopCardCheckBox.setEnabled( addCardsCheckBox.isSelected() );
             if (!addCardsCheckBox.isSelected()) {
-                dontStopCardCheckBox.setSelected(false);
+                denyStopCardCheckBox.setSelected(false);
             }
         }
 
@@ -248,7 +248,7 @@ public class GameConfiguration {
                     moveAgainCheckBox.isSelected(),
                     rollAgainCheckBox.isSelected(),
                     addCardsCheckBox.isSelected(),
-                    dontStopCardCheckBox.isSelected()
+                    denyStopCardCheckBox.isSelected()
             );
             // Save the records in a file
             JFileChooser fileChooser = new JFileChooser();
@@ -273,7 +273,7 @@ public class GameConfiguration {
                     moveAgainCheckBox.isSelected(),
                     rollAgainCheckBox.isSelected(),
                     addCardsCheckBox.isSelected(),
-                    dontStopCardCheckBox.isSelected()
+                    denyStopCardCheckBox.isSelected()
             );
 
             this.setVisible(false);

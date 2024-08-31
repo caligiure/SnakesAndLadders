@@ -8,5 +8,5 @@ public record SpecialRulesRecord(
         boolean moveAgainTiles,
         boolean rollAgainTiles,
         boolean addCards,
-        boolean dontStopCard
+        boolean denyStopCard
 ) implements Serializable {}

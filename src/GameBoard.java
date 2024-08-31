@@ -27,7 +27,7 @@ public class GameBoard {
     private LinkedList<int[]> snakes; // head and tail position of every snake
     private Content[][] cellsContent; // the type of content of every cell
     private enum Content {
-        empty, ladderBottom, ladderTop, snakeHead, snakeTail, stop, moveAgain, rollAgain, drawCard
+        empty, ladderBottom, ladderTop, snakeHead, snakeTail, stop, moveAgain, rollAgain, drawCard, denyStop
     }
     private final LinkedList<Integer> stoppedPlayers = new LinkedList<>(); // players that are currently stopped
 
@@ -320,6 +320,7 @@ public class GameBoard {
         @Override
         protected void paintComponent(Graphics g) {
             drawLaddersAndSnakes(g);
+            drawSpecialCells(g);
         }
 
         private void drawLaddersAndSnakes(Graphics g) {
@@ -331,8 +332,6 @@ public class GameBoard {
                 // draw 2 straight line that represent the ladder
                 g.drawLine(bottomPoint.x-10, bottomPoint.y, topPoint.x-10, topPoint.y);
                 g.drawLine(bottomPoint.x+10, bottomPoint.y, topPoint.x+10, topPoint.y);
-                g.fillRect(bottomPoint.x-10, bottomPoint.y-1, 20, 10);
-                g.fillRect(topPoint.x-10, topPoint.y-1, 20, 10);
             }
             // Draw red snakes
             g.setColor(Color.RED);
@@ -342,7 +341,6 @@ public class GameBoard {
                 // draw 2 straight line that represent the snake
                 g.drawLine(tailPoint.x-10, tailPoint.y, headPoint.x-10, headPoint.y);
                 g.drawLine(tailPoint.x+10, tailPoint.y, headPoint.x+10, headPoint.y);
-                g.fillOval(headPoint.x-10, headPoint.y-2, 20, 12);
             }
         }
 
@@ -357,7 +355,31 @@ public class GameBoard {
             int pixelX = col * cellWidth + cellWidth / 2;
             int pixelY = row * cellHeight  + cellHeight / 2;
             return new Point(pixelX, pixelY);
-        }
+        } // represents ladders and snakes with lines
+
+        private void drawSpecialCells(Graphics g) {
+            for (int row = 0; row < primaryRules.nRows(); row++) {
+                for (int col = 0; col < primaryRules.nCols(); col++) {
+                    Content content = cellsContent[row][col];
+                    if( !(content.equals(Content.empty)) && !(content.equals(Content.denyStop)) ) {
+                        Point center = calculateDrawingPoint(findPosition(row, col));
+                        if (content.equals(Content.rollAgain))
+                            g.setColor(Color.BLUE);
+                        else if (content.equals(Content.moveAgain))
+                            g.setColor(Color.CYAN);
+                        else if (content.equals(Content.stop))
+                            g.setColor(Color.MAGENTA);
+                        else if (content.equals(Content.drawCard))
+                            g.setColor(Color.YELLOW);
+                        else if (content.equals(Content.snakeHead) || content.equals(Content.snakeTail))
+                            g.setColor(Color.RED);
+                        else if (content.equals(Content.ladderBottom) || content.equals(Content.ladderTop))
+                            g.setColor(Color.GREEN);
+                        g.drawRoundRect(center.x - 19, center.y - 19, 41, 41, 10, 10);
+                    }
+                }
+            }
+        } // draws a rectangle of a different color for each kind of special cell
     } // panel that contains the cells of the board
 
     private class RollDiceListener implements ActionListener {
@@ -374,14 +396,14 @@ public class GameBoard {
             boolean doubleSix = false;
             if(stoppedPlayers.contains(currentPlayer)) {
                 gameLog.append("Player " + playersTag[currentPlayer] + " is stopped and will play on the next turn.\n");
-                stoppedPlayers.remove(currentPlayer);
+                stoppedPlayers.removeFirstOccurrence(currentPlayer);
             } else {
                 if (specialRules.singleDice() && currentPosition >= primaryRules.nRows() * primaryRules.nCols() - 6) // if the player is on one of the last 6 cells and the rule singleDice is active
                     diceSum = sumDices(currentPlayer, 1);
                 else
                     diceSum = sumDices(currentPlayer, primaryRules.nDices());
                 if (specialRules.doubleSix() && diceSum == 12) { // if the rule doubleSix is active
-                    gameLog.append("Player " + playersTag[currentPlayer] + " got a double six!" + diceSum + ".\n");
+                    gameLog.append("Player " + playersTag[currentPlayer] + " got a double six!⚅⚅\n");
                     doubleSix = true;
                 }
                 int newPosition = calculateNewPosition(currentPlayer, diceSum);
@@ -448,29 +470,50 @@ public class GameBoard {
             } else if(cellsContent[coords[0]][coords[1]].equals(Content.ladderBottom)) {
                 for(int[] ladder : ladders) {
                     if (ladder[0] == position){
-                        gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a ladder ⤴.\n");
+                        gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a ladder!⏫\n");
                         movePlayer(currentPlayer, ladder[1]);
                     }
-
                 }
             } else if(cellsContent[coords[0]][coords[1]].equals(Content.snakeHead)) {
                 for(int[] snake : snakes) {
                     if(snake[0] == position) {
-                        gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a snake ⤵.\n");
+                        gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a snake!⏬\n");
                         movePlayer(currentPlayer, snake[1]);
                     }
                 }
             } else if(cellsContent[coords[0]][coords[1]].equals(Content.rollAgain)) {
-                gameLog.append("Player " + playersTag[currentPlayer] + " must roll again!\n");
+                gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a special tile!✨\n");
+                gameLog.append("Player " + playersTag[currentPlayer] + " must roll again!↺⚀⚅\n");
                 rollDice();
             } else if(cellsContent[coords[0]][coords[1]].equals(Content.moveAgain)) {
-                gameLog.append("Player " + playersTag[currentPlayer] + " must move again!\n");
+                gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a special tile!✨\n");
+                gameLog.append("Player " + playersTag[currentPlayer] + " must move again!⏩\n");
                 int newPosition = calculateNewPosition(currentPlayer, diceSum);
                 movePlayer(currentPlayer, newPosition);
             } else if(cellsContent[coords[0]][coords[1]].equals(Content.stop)) {
-                gameLog.append("Player " + playersTag[currentPlayer] + " is stopped for a turn!\n");
+                gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a stop tile!❌\n");
+                gameLog.append("Player " + playersTag[currentPlayer] + " is stopped for 1 turn!⏳\n");
                 stoppedPlayers.add(currentPlayer);
+            } else if(cellsContent[coords[0]][coords[1]].equals(Content.drawCard)) {
+                gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a card tile!♠♣♥♦\n");
+                Content card = drawCard();
+                gameLog.append("Player " + playersTag[currentPlayer] + " draws a \n");
             }
+        }
+
+        private Content drawCard() {
+            Random rand = new Random();
+            int card; // there are 4 types of card: stop(0), moveAgain(1), rollAgain(2), denyStop(3)
+            if(specialRules.denyStopCard()) // if the rule isn't active the card denyStop can't be drawn
+                card=rand.nextInt(0, 4);
+            else
+                card=rand.nextInt(0, 3);
+            return switch (card) {
+                case 0 -> Content.stop;
+                case 1 -> Content.moveAgain;
+                case 2 -> Content.rollAgain;
+                default -> Content.denyStop;
+            };
         }
 
         private void endGame(int currentPlayer) {
