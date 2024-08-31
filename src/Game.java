@@ -6,134 +6,42 @@ import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.Random;
 
-// Da fare: inserimento nomi, autoAdvance, rules, crea eseguibili, reset button
+// Da fare: autoAdvance, rules, reset button, executables
 
 public class Game {
-    // Game Rules and Settings
     private final PrimaryRulesRecord primaryRules;
     private final SpecialRulesRecord specialRules;
-    private JLabel[][] cells;
-    // Players
-    private final String[] playersTag;
-    private final String[] playersName;
-    private final int[] playersPosition;
-    private int nextPlayer = 0; // indicates the number of the player who must roll the dices
-    // Game Log
-    private DefaultTableModel playersTable;  // shows ID, name and position of every player
-    private JTextArea gameLog;  // Text area for gameLog
-    // snakes, ladders and special cells
-    private final LinkedList<int[]> ladders = new LinkedList<>(); // bottom and top position of every ladder
-    private final LinkedList<int[]> snakes = new LinkedList<>(); // head and tail position of every snake
-    private Content[][] cellsContent; // the type of content of every cell
-    private enum Content {
-        empty, ladderBottom, ladderTop, snakeHead, snakeTail, stop, moveAgain, rollAgain, drawCard
-    }
-    private final LinkedList<Integer> stoppedPlayers = new LinkedList<>(); // players that are currently stopped
-    private final LinkedList<Integer> denyStopPlayers = new LinkedList<>(); // players that are currently holding a denyStop card
+    private final String[] playerName;
 
     public Game(PrimaryRulesRecord primaryRules, SpecialRulesRecord specialRules) {
         this.primaryRules = primaryRules;
         this.specialRules = specialRules;
-        int nPlayers = primaryRules.nPlayers();
-        playersTag = new String[nPlayers];
-        playersName = new String[nPlayers];
-        playersPosition = new int[nPlayers];
-
-        initializePlayersTag(); // sets a tag for every player, which will be displayed on the board
-        randomizeCellsContent(); // chooses randomly the content of every cell (snake, ladder, special cells)
-
-        InsertPlayerNameFrame firstPlayerFrame = new InsertPlayerNameFrame(1); // frame to insert the first player's name
+        playerName = new String[primaryRules.nPlayers()];
+        InsertPlayerNameFrame firstPlayerFrame = new InsertPlayerNameFrame(0); // frame to insert the first player's name
         firstPlayerFrame.setVisible(true);
     }
-
-    private void initializePlayersTag() {
-        for(int i=0; i<primaryRules.nPlayers(); i++){
-            String id = "👤"+(i+1);
-            playersTag[i] = id;
-        }
-    } // sets a tag for every player, which will be displayed on the board
-
-    private void randomizeCellsContent() {
-        int nRows = primaryRules.nRows();
-        int nCols = primaryRules.nCols();
-        cellsContent = new Content[nRows][nCols]; // contains snakes, ladders and special cells
-        for(int i = 0; i < primaryRules.nRows(); i++) {
-            for(int j = 0; j < primaryRules.nCols(); j++) {
-                cellsContent[i][j]= Content.empty; // initialize every cell as empty
-            }
-        }
-        // choose randomly the bottom and top point of every ladder, avoiding the cells that already contain something
-        // the first and last cell of the board cannot contain ladders
-        for(int i=0; i<primaryRules.nLadders(); i++) {
-            int ladderBottom = putInRandomEmptyPosition(2, nRows*nCols-1, Content.ladderBottom); // the second-last cell can't contain the bottom of a ladder
-            int ladderTop = putInRandomEmptyPosition(ladderBottom+1, nRows*nCols, Content.ladderTop); // ladderTop must be after startingPoint
-            ladders.add( new int[]{ladderBottom, ladderTop} ); // add ladder to ladders list
-        }
-        // choose randomly the head and tail point of every snake, avoiding the cells that already contain something
-        for(int i=0; i<primaryRules.nSnakes(); i++) {
-            int snakeHead = putInRandomEmptyPosition(2, nRows*nCols, Content.snakeHead); // the first and final cells cannot be a head point for a snake
-            int snakeTail = putInRandomEmptyPosition(1, snakeHead, Content.snakeTail); // snakeTail must be before headPoint
-            snakes.add( new int[]{snakeHead, snakeTail} ); // add snake to snakes list
-        }
-        // initialize special Cells
-        int numOfSpecialCellsPerType = getNumOfSpecialCellsPerType(nRows, nCols); // there are four types of special cells
-        for(int i=0; i<numOfSpecialCellsPerType; i++) {
-            if(specialRules.stopTiles()) { // a type of content must be added only if the relative rule is active
-                putInRandomEmptyPosition(2, nRows*nCols, Content.stop); // first and last cell can't contain a special item
-            }
-            if(specialRules.moveAgainTiles()) {
-                putInRandomEmptyPosition(2, nRows*nCols, Content.moveAgain);
-            }
-            if(specialRules.rollAgainTiles()) {
-                putInRandomEmptyPosition(2, nRows*nCols, Content.rollAgain);
-            }
-            if(specialRules.addCards()) {
-                putInRandomEmptyPosition(2, nRows*nCols, Content.drawCard);
-            }
-        }
-    } // initialize the content of every cell (snake, ladder, special cells)
-    private int putInRandomEmptyPosition(int origin, int bound, Content content){
-        Random random = new Random();
-        int position = random.nextInt(origin, bound);
-        int[] coords = findCoordinates(position);
-        while ( !cellsContent[coords[0]][coords[1]].equals(Content.empty) ) {
-            position = random.nextInt(origin, bound);
-            coords = findCoordinates(position);
-        }
-        cellsContent[coords[0]][coords[1]] = content;
-        return position;
-    } // used in randomizeCellsContent, chooses a random empty cell and puts the specified content inside it, then returns the position of the cell
-    private int getNumOfSpecialCellsPerType(int nRows, int nCols) {
-        int percentageOfSpecialCells = ((nRows * nCols) / 100)*40; // the board will contain at max 40% of special cells
-        int numOfEmptyCells =  nRows * nCols - (primaryRules.nSnakes()+primaryRules.nLadders()) * 2 - 2;
-        int maxNumOfSpecialCells = percentageOfSpecialCells;
-        if (numOfEmptyCells < maxNumOfSpecialCells) {
-            maxNumOfSpecialCells = numOfEmptyCells;
-        }
-        return maxNumOfSpecialCells / 4; // there are four types of special cells
-    } // used in randomizeCellsContent, returns the number of special cells of every type which can be added to the board, based on the dimensions of the board and the number of snakes and ladders
 
     private class InsertPlayerNameFrame extends JFrame {
         public InsertPlayerNameFrame(int i) {
             // Set the JFrame
             setTitle("Insert Player Name");
-            setSize(300, 200);
+            setSize(500, 100);
             setLocationRelativeTo(null); // sets the location of this frame at the center of the screen
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setLayout(new BorderLayout());
             JPanel panel = new JPanel(new GridLayout(1, 3, 10, 10)); // this panel contains the other elements
-            JTextField nameField = new JTextField("Player "+i); // field for the player's name
+            JTextField nameField = new JTextField("Player "+(i+1)); // field for the player's name
             JButton okButton = new JButton("OK");
             okButton.addActionListener(e -> saveAndClose(i, nameField.getText())); // saves the name and closes the frame
-            panel.add(new JLabel("Insert name for Player "+i+":"));
+            panel.add(new JLabel("Insert name for Player "+(i+1)+":"));
             panel.add(nameField);
             panel.add(okButton);
             add(panel);
         }
 
         private void saveAndClose(int i, String name) {
-            playersName[i] = name;
-            if(i<primaryRules.nPlayers()){
+            playerName[i] = name;
+            if(i < primaryRules.nPlayers()-1){
                 InsertPlayerNameFrame nextPlayerFrame = new InsertPlayerNameFrame(i+1);
                 nextPlayerFrame.setVisible(true);
             } else {
@@ -144,39 +52,29 @@ public class Game {
         } // saves the name, opens the next frame and closes itself
     } // frame to insert a player's name
 
-    private int[] findCoordinates(int position) {
-        int rows = primaryRules.nRows();
-        int cols = primaryRules.nCols();
-        int rowFromBottom = (position - 1) / cols; // Number of the row counting from the bottom
-        int x = rows - 1 - rowFromBottom;       // x coordinate
-        boolean isEvenRow = rowFromBottom % 2 == 0; // even row counting from the bottom
-        int y;
-        if (isEvenRow) {
-            y = (position - 1) % cols; // counting from left to right
-        } else {
-            y = cols - 1 - ((position - 1) % cols); // counting from right to left
-        }
-        return new int[]{x, y};
-    } // returns an array containing the x and y coordinates of a cell in the cells matrix, given its position
-
-    private int findPosition(int x, int y) {
-        int rows = primaryRules.nRows();
-        int cols = primaryRules.nCols();
-        // the starting point must always be in the bottom-left corner
-        int rowFromBottom = rows - 1 - x;  // Number of the row counting from the bottom
-        boolean isEvenRow = rowFromBottom % 2 == 0; // even row counting from the bottom
-        int index;
-        if (isEvenRow) {
-            index = (rowFromBottom * cols) + y + 1; // counting from left to right
-        } else {
-            index = (rowFromBottom * cols) + (cols - y); // counting from right to left
-        }
-        return index;
-    } // returns the index of the cell, given the coordinates od the cells matrix
-
     private class GameFrame extends JFrame {
+        // Players
+        private final String[] playersTag = new String[primaryRules.nPlayers()];
+        private final int[] playersPosition = new int[primaryRules.nPlayers()];
+        private int nextPlayer = 0; // indicates the number of the player who must roll the dices
+        private final LinkedList<Integer> stoppedPlayers = new LinkedList<>(); // players that are currently stopped
+        private final LinkedList<Integer> denyStopPlayers = new LinkedList<>(); // players that are currently holding a denyStop card
+        // Game Log
+        private DefaultTableModel playersTable;  // shows ID, name and position of every player
+        private JTextArea gameLog;  // Text area for gameLog
+        // Snakes, ladders and special cells
+        private final JLabel[][] cells = new JLabel[primaryRules.nRows()][primaryRules.nCols()]; // create matrix of labels;
+        private final LinkedList<int[]> ladders = new LinkedList<>(); // bottom and top position of every ladder
+        private final LinkedList<int[]> snakes = new LinkedList<>(); // head and tail position of every snake
+        private final Content[][] cellsContent = new Content[primaryRules.nRows()][primaryRules.nCols()]; // the type of content of every cell
+        private enum Content {
+            empty, ladderBottom, ladderTop, snakeHead, snakeTail, stop, moveAgain, rollAgain, drawCard
+        } // types of content that a cell can contain, or that can be found in the cards
+
         public GameFrame() {
             initializeFrame(); // sets the name, size and layout of the frame
+            initializePlayersTag(); // sets a tag for every player, which will be displayed on the board
+            randomizeCellsContent(); // chooses randomly the content of every cell (snake, ladder, special cells)
 
             BoardPanel boardPanel = new BoardPanel(); // panel that contains the cells of the board
             add(boardPanel, BorderLayout.CENTER);
@@ -187,10 +85,10 @@ public class Game {
             JPanel sidePanel = buildSidePanel(); // create a side panel to show game log and players table
             add(sidePanel, BorderLayout.EAST);
 
-            putPlayersOnTheBoard(); // after the board is created, puts every player on the board
+            for(int i=0; i<primaryRules.nPlayers(); i++)
+                updatePlayerPosition(i, 1); // after the board is created, puts every player on the board
             gameLog.append("Next Player: " + playersTag[0] + ".\n");
         }
-
         private void initializeFrame() {
             setTitle("Scale e Serpenti");
             setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -198,11 +96,104 @@ public class Game {
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setLayout(new BorderLayout()); // set layout of the container
         } // sets the name, size and layout of the frame
+        private void initializePlayersTag() {
+            for(int i=0; i<primaryRules.nPlayers(); i++){
+                String id = "👤"+(i+1);
+                playersTag[i] = id;
+            }
+        } // sets a tag for every player, which will be displayed on the board
+        private void randomizeCellsContent() {
+            int nRows = primaryRules.nRows();
+            int nCols = primaryRules.nCols();
+            for(int i = 0; i < primaryRules.nRows(); i++) {
+                for(int j = 0; j < primaryRules.nCols(); j++) {
+                    cellsContent[i][j]= Content.empty; // initialize every cell as empty
+                }
+            }
+            // choose randomly the bottom and top point of every ladder, avoiding the cells that already contain something
+            // the first and last cell of the board cannot contain ladders
+            for(int i=0; i<primaryRules.nLadders(); i++) {
+                int ladderBottom = putInRandomEmptyPosition(2, nRows*nCols-1, Content.ladderBottom); // the second-last cell can't contain the bottom of a ladder
+                int ladderTop = putInRandomEmptyPosition(ladderBottom+1, nRows*nCols, Content.ladderTop); // ladderTop must be after startingPoint
+                ladders.add( new int[]{ladderBottom, ladderTop} ); // add ladder to ladders list
+            }
+            // choose randomly the head and tail point of every snake, avoiding the cells that already contain something
+            for(int i=0; i<primaryRules.nSnakes(); i++) {
+                int snakeHead = putInRandomEmptyPosition(2, nRows*nCols, Content.snakeHead); // the first and final cells cannot be a head point for a snake
+                int snakeTail = putInRandomEmptyPosition(1, snakeHead, Content.snakeTail); // snakeTail must be before headPoint
+                snakes.add( new int[]{snakeHead, snakeTail} ); // add snake to snakes list
+            }
+            // initialize special Cells
+            int numOfSpecialCellsPerType = getNumOfSpecialCellsPerType(nRows, nCols); // there are four types of special cells
+            for(int i=0; i<numOfSpecialCellsPerType; i++) {
+                if(specialRules.stopTiles()) { // a type of content must be added only if the relative rule is active
+                    putInRandomEmptyPosition(2, nRows*nCols, Content.stop); // first and last cell can't contain a special item
+                }
+                if(specialRules.moveAgainTiles()) {
+                    putInRandomEmptyPosition(2, nRows*nCols, Content.moveAgain);
+                }
+                if(specialRules.rollAgainTiles()) {
+                    putInRandomEmptyPosition(2, nRows*nCols, Content.rollAgain);
+                }
+                if(specialRules.addCards()) {
+                    putInRandomEmptyPosition(2, nRows*nCols, Content.drawCard);
+                }
+            }
+        } // initialize the content of every cell (snake, ladder, special cells)
+        private int putInRandomEmptyPosition(int origin, int bound, Content content){
+            Random random = new Random();
+            int position = random.nextInt(origin, bound);
+            int[] coords = findCoordinates(position);
+            while ( !cellsContent[coords[0]][coords[1]].equals(Content.empty) ) {
+                position = random.nextInt(origin, bound);
+                coords = findCoordinates(position);
+            }
+            cellsContent[coords[0]][coords[1]] = content;
+            return position;
+        } // used in randomizeCellsContent, chooses a random empty cell and puts the specified content inside it, then returns the position of the cell
+        private int getNumOfSpecialCellsPerType(int nRows, int nCols) {
+            int percentageOfSpecialCells = ((nRows * nCols) / 100)*40; // the board will contain at max 40% of special cells
+            int numOfEmptyCells =  nRows * nCols - (primaryRules.nSnakes()+primaryRules.nLadders()) * 2 - 2;
+            int maxNumOfSpecialCells = percentageOfSpecialCells;
+            if (numOfEmptyCells < maxNumOfSpecialCells) {
+                maxNumOfSpecialCells = numOfEmptyCells;
+            }
+            return maxNumOfSpecialCells / 4; // there are four types of special cells
+        } // used in randomizeCellsContent, returns the number of special cells of every type which can be added to the board, based on the dimensions of the board and the number of snakes and ladders
+
+        private int[] findCoordinates(int position) {
+            int rows = primaryRules.nRows();
+            int cols = primaryRules.nCols();
+            int rowFromBottom = (position - 1) / cols; // Number of the row counting from the bottom
+            int x = rows - 1 - rowFromBottom;       // x coordinate
+            boolean isEvenRow = rowFromBottom % 2 == 0; // even row counting from the bottom
+            int y;
+            if (isEvenRow) {
+                y = (position - 1) % cols; // counting from left to right
+            } else {
+                y = cols - 1 - ((position - 1) % cols); // counting from right to left
+            }
+            return new int[]{x, y};
+        } // returns an array containing the x and y coordinates of a cell in the cells matrix, given its position
+
+        private int findPosition(int x, int y) {
+            int rows = primaryRules.nRows();
+            int cols = primaryRules.nCols();
+            // the starting point must always be in the bottom-left corner
+            int rowFromBottom = rows - 1 - x;  // Number of the row counting from the bottom
+            boolean isEvenRow = rowFromBottom % 2 == 0; // even row counting from the bottom
+            int index;
+            if (isEvenRow) {
+                index = (rowFromBottom * cols) + y + 1; // counting from left to right
+            } else {
+                index = (rowFromBottom * cols) + (cols - y); // counting from right to left
+            }
+            return index;
+        } // returns the index of the cell, given the coordinates od the cells matrix
 
         private class BoardPanel extends JPanel {
             public BoardPanel() {
                 super(new GridLayout(primaryRules.nRows(), primaryRules.nCols()));
-                cells = new JLabel[primaryRules.nRows()][primaryRules.nCols()]; // create matrix of labels
                 int rows = primaryRules.nRows();
                 int cols = primaryRules.nCols();
                 // fill the board from last to first cell
@@ -286,12 +277,7 @@ public class Game {
                     }
                 }
             } // draws a rectangle of a different color for each kind of special cell
-        } // panel that contains the cells of the board
-
-        private JLabel getCellLabel(int i) {
-            int[] cord = findCoordinates(i);
-            return cells[cord[0]][cord[1]];
-        } // returns a cell, given its index
+        } // overrides the paintComponent method of JPanel to draw ladders, snakes and special cells on the board
 
         private JPanel buildBottomPanel() {
             JPanel buttonsPanel = new JPanel(new GridLayout(1, 3, 10, 10));
@@ -304,10 +290,13 @@ public class Game {
             rulesButton.addActionListener(e -> showRules());
             buttonsPanel.add(rulesButton);
             // add a button to roll the dice (only if autoAdvance is off)
-            if( !specialRules.autoAdvance() ) {
+            if( specialRules.autoAdvance() ) {
+                JButton startButton = new JButton("Start");
+                startButton.addActionListener(new AutoAdvanceGame());
+                buttonsPanel.add(startButton);
+            } else {
                 JButton rollButton = new JButton("Roll Dice");
-                RollDiceListener rollDiceListener = new RollDiceListener();
-                rollButton.addActionListener(rollDiceListener);
+                rollButton.addActionListener(new RollDiceListener());
                 buttonsPanel.add(rollButton);
             }
             return buttonsPanel;
@@ -350,7 +339,7 @@ public class Game {
             Object[][] data = new Object[primaryRules.nPlayers()][3];
             for (int i = 0; i < primaryRules.nPlayers(); i++) {
                 data[i][0] = playersTag[i];
-                data[i][1] = playersName[i];
+                data[i][1] = playerName[i];
                 data[i][2] = 1;
             }
             playersTable = new DefaultTableModel(data, columnNames);
@@ -368,7 +357,7 @@ public class Game {
             data[3][0] = "YELLOW"; data[3][1] = "Draw card ♠♣♥♦";
             data[4][0] = "RED"; data[4][1] = "Snake ⏬";
             data[5][0] = "GREEN"; data[5][1] = "Ladder ⏫";
-            data[6][0] = "DENY STOP"; data[6][1] = "Denies a Stop Tile or a Stop Card ✋";
+            data[6][0] = "DENY STOP"; data[6][1] = "Denies a Stop ✋";
             DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
             JTable table = new JTable(tableModel); // contains the default table model
             table.setDefaultEditor(Object.class, null);
@@ -381,12 +370,6 @@ public class Game {
             gameLog.setEditable(false);
             return new JScrollPane(gameLog);
         } // builds a gameLog to show all the game infos
-
-        private void putPlayersOnTheBoard() {
-            for(int i=0; i<primaryRules.nPlayers(); i++){
-                updatePlayerPosition(i, 1);
-            }
-        } // sets the starting position of every player
 
         private void updatePlayerPosition(int playerIndex, int newPosition) {
             // remove player from the old cell
@@ -413,24 +396,45 @@ public class Game {
             cell.setText(newText.toString());
             this.repaint(); // to avoid graphic errors
         } // removes a player from the old cell and adds it to the new one
-
-        private void logPlayerMovement(int playerIndex, int newPosition) {
-            playersTable.setValueAt(newPosition, playerIndex, 2);
-            gameLog.append("Player " + playersTag[playerIndex] + " moves to cell " + newPosition + ".\n");
-        } // updates the position of the player on the playersTable and adds a new log on the gameLog regarding its movement
+        private JLabel getCellLabel(int i) {
+            int[] cord = findCoordinates(i);
+            return cells[cord[0]][cord[1]];
+        } // used in updatePlayerPosition, returns the label of a cell, given its index
 
         private GameFrame getGameFrame() {
             return this;
-        }
+        } // used in RollDiceListener
 
-        private class RollDiceListener implements ActionListener {
+        private class RollDiceListener extends GameManager {
             @Override
             public void actionPerformed(ActionEvent e) {
                 rollDice();
                 nextTurn();
             }
 
-            private void rollDice() {
+            @Override
+            void nextTurn() {
+                nextPlayer = (nextPlayer +1) % primaryRules.nPlayers();  // updates the turn
+                gameLog.append("Next Player: " + playersTag[nextPlayer] + ".\n");
+            }
+        }
+
+        private class AutoAdvanceGame extends GameManager {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+
+            @Override
+            void nextTurn() {
+
+            }
+        }
+
+        private abstract class GameManager implements ActionListener{
+
+            void rollDice() {
                 int currentPlayer = nextPlayer;
                 int currentPosition = playersPosition[currentPlayer];
                 int diceSum;
@@ -447,14 +451,14 @@ public class Game {
                         gameLog.append("Player " + playersTag[currentPlayer] + " got a double six!⚅⚅\n");
                         doubleSix = true;
                     }
-                    int newPosition = calculateNewPosition(currentPlayer, diceSum);
+                    int newPosition = calculateNewPosition(currentPosition, diceSum);
                     movePlayer(currentPlayer, newPosition);
                     checkTile(currentPlayer, newPosition, diceSum); // check for snakes, ladders, special tiles or final cell
                     if (doubleSix) {
                         rollDice(); // if the player got a double six, he must roll again
                     }
                 }
-            }
+            } // rolls the dice and manages the consequences
 
             private int sumDices(int currentPlayer, int nDices) {
                 Random rand = new Random();
@@ -486,21 +490,21 @@ public class Game {
                 }
                 gameLog.append("Player " + playersTag[currentPlayer] + " got a " + diceSum + visualResult + ".\n");
                 return diceSum;
-            }
+            } //calculates the sum of the dices and visualizes the results in the gameLog
 
-            private int calculateNewPosition(int currentPlayer, int diceSum) {
-                int currentPosition = playersPosition[currentPlayer];
+            private int calculateNewPosition(int currentPosition, int diceSum) {
                 int newPosition = currentPosition + diceSum;
                 int finalCell = primaryRules.nRows()*primaryRules.nCols();
                 if (newPosition > finalCell) { // the last cell must be reached with an exact shot
                     newPosition = finalCell - (newPosition - finalCell);
                 }
                 return newPosition;
-            }
+            } // calculates the new position of a player, based on its currentPosition and the sum of the dice
 
             private void movePlayer(int currentPlayer, int newPosition) {
                 updatePlayerPosition(currentPlayer, newPosition);
-                logPlayerMovement(currentPlayer, newPosition);
+                playersTable.setValueAt(newPosition, currentPlayer, 2);
+                gameLog.append("Player " + playersTag[currentPlayer] + " moves to cell " + newPosition + ".\n");
             }
 
             private void checkTile(int currentPlayer, int position, int diceSum) {
@@ -529,7 +533,7 @@ public class Game {
                 } else if(cellsContent[coords[0]][coords[1]].equals(Content.moveAgain)) {
                     gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a special tile!✨\n");
                     gameLog.append("Player " + playersTag[currentPlayer] + " must move again!⏩\n");
-                    int newPosition = calculateNewPosition(currentPlayer, diceSum);
+                    int newPosition = calculateNewPosition(playersPosition[currentPlayer], diceSum);
                     movePlayer(currentPlayer, newPosition);
                 } else if(cellsContent[coords[0]][coords[1]].equals(Content.stop)) {
                     gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a stop tile!❌\n");
@@ -565,7 +569,7 @@ public class Game {
                 } else if(card == 1) {
                     gameLog.append("Player " + playersTag[currentPlayer] + " draws a move again card!⏩\n");
                     gameLog.append("Player " + playersTag[currentPlayer] + " must move again!⏩\n");
-                    int newPosition = calculateNewPosition(currentPlayer, diceSum);
+                    int newPosition = calculateNewPosition(playersPosition[currentPlayer], diceSum);
                     movePlayer(currentPlayer, newPosition);
                 } else if(card == 2) {
                     gameLog.append("Player " + playersTag[currentPlayer] + " draws a roll again card!↺⚀⚅\n");
@@ -579,7 +583,7 @@ public class Game {
             } // draws a card randomly
 
             private void endGame(int currentPlayer) {
-                String winnerMessage = playersName[currentPlayer] + " (Player " + playersTag[currentPlayer] + ") wins the game!";
+                String winnerMessage = playerName[currentPlayer] + " (Player " + playersTag[currentPlayer] + ") wins the game!";
                 JOptionPane.showMessageDialog(getGameFrame(), winnerMessage, "Winner!", JOptionPane.INFORMATION_MESSAGE);
                 // exit or restart the game
                 int response = JOptionPane.showConfirmDialog(getGameFrame(), "Do you want to restart this match?", "Restart?", JOptionPane.YES_NO_OPTION);
@@ -592,12 +596,10 @@ public class Game {
                 }
             }
 
-            private void nextTurn() {
-                nextPlayer = (nextPlayer +1) % primaryRules.nPlayers();  // updates the turn
-                gameLog.append("Next Player: " + playersTag[nextPlayer] + ".\n");
-            }
+            abstract void nextTurn();
+
         }
 
-    } // frame that contains all the graphic elements of the game
+    } // GameFrame contains all the graphic elements of the game
 
 }
