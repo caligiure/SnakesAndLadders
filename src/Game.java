@@ -1,12 +1,5 @@
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.LinkedList;
-import java.util.Random;
-
-// Da fare: autoAdvance, rules, reset button, executables
 
 public class Game {
     private final PrimaryRulesRecord primaryRules;
@@ -22,6 +15,7 @@ public class Game {
     }
 
     private class InsertPlayerNameFrame extends JFrame {
+
         public InsertPlayerNameFrame(int i) {
             // Set the JFrame
             setTitle("Insert Player Name");
@@ -45,13 +39,14 @@ public class Game {
                 InsertPlayerNameFrame nextPlayerFrame = new InsertPlayerNameFrame(i+1);
                 nextPlayerFrame.setVisible(true);
             } else {
-                GameFrame gameFrame = new GameFrame();
+                GameFrame gameFrame = new GameFrame(primaryRules, specialRules, playerName);
                 gameFrame.setVisible(true);
             }
             this.dispose();
         } // saves the name, opens the next frame and closes itself
     } // frame to insert a player's name
 
+    /*
     private class GameFrame extends JFrame {
         // Players
         private final String[] playersTag = new String[primaryRules.nPlayers()];
@@ -432,174 +427,7 @@ public class Game {
             }
         }
 
-        private abstract class GameManager implements ActionListener{
-
-            void rollDice() {
-                int currentPlayer = nextPlayer;
-                int currentPosition = playersPosition[currentPlayer];
-                int diceSum;
-                boolean doubleSix = false;
-                if(stoppedPlayers.contains(currentPlayer)) {
-                    gameLog.append("Player " + playersTag[currentPlayer] + " is stopped and will play on the next turn.\n");
-                    stoppedPlayers.removeFirstOccurrence(currentPlayer);
-                } else {
-                    if (specialRules.singleDice() && currentPosition >= primaryRules.nRows() * primaryRules.nCols() - 6) // if the player is on one of the last 6 cells and the rule singleDice is active
-                        diceSum = sumDices(currentPlayer, 1);
-                    else
-                        diceSum = sumDices(currentPlayer, primaryRules.nDices());
-                    if (specialRules.doubleSix() && diceSum == 12) { // if the rule doubleSix is active
-                        gameLog.append("Player " + playersTag[currentPlayer] + " got a double six!⚅⚅\n");
-                        doubleSix = true;
-                    }
-                    int newPosition = calculateNewPosition(currentPosition, diceSum);
-                    movePlayer(currentPlayer, newPosition);
-                    checkTile(currentPlayer, newPosition, diceSum); // check for snakes, ladders, special tiles or final cell
-                    if (doubleSix) {
-                        rollDice(); // if the player got a double six, he must roll again
-                    }
-                }
-            } // rolls the dice and manages the consequences
-
-            private int sumDices(int currentPlayer, int nDices) {
-                Random rand = new Random();
-                int diceSum = 0; // sums the total of nDices
-                StringBuilder visualResult = new StringBuilder();
-                for (int i = 0; i < nDices; i++) {
-                    int res = rand.nextInt(1,7);
-                    diceSum += res;
-                    switch (res) {
-                        case 1:
-                            visualResult.append("⚀");
-                            break;
-                        case 2:
-                            visualResult.append("⚁");
-                            break;
-                        case 3:
-                            visualResult.append("⚂");
-                            break;
-                        case 4:
-                            visualResult.append("⚃");
-                            break;
-                        case 5:
-                            visualResult.append("⚄");
-                            break;
-                        default:
-                            visualResult.append("⚅");
-                            break;
-                    }
-                }
-                gameLog.append("Player " + playersTag[currentPlayer] + " got a " + diceSum + visualResult + ".\n");
-                return diceSum;
-            } //calculates the sum of the dices and visualizes the results in the gameLog
-
-            private int calculateNewPosition(int currentPosition, int diceSum) {
-                int newPosition = currentPosition + diceSum;
-                int finalCell = primaryRules.nRows()*primaryRules.nCols();
-                if (newPosition > finalCell) { // the last cell must be reached with an exact shot
-                    newPosition = finalCell - (newPosition - finalCell);
-                }
-                return newPosition;
-            } // calculates the new position of a player, based on its currentPosition and the sum of the dice
-
-            private void movePlayer(int currentPlayer, int newPosition) {
-                updatePlayerPosition(currentPlayer, newPosition);
-                playersTable.setValueAt(newPosition, currentPlayer, 2);
-                gameLog.append("Player " + playersTag[currentPlayer] + " moves to cell " + newPosition + ".\n");
-            }
-
-            private void checkTile(int currentPlayer, int position, int diceSum) {
-                int finalCell = primaryRules.nRows()*primaryRules.nCols();
-                int[] coords = findCoordinates(position);
-                if(position == finalCell) {
-                    endGame(currentPlayer);
-                } else if(cellsContent[coords[0]][coords[1]].equals(Content.ladderBottom)) {
-                    for(int[] ladder : ladders) {
-                        if (ladder[0] == position){
-                            gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a ladder!⏫\n");
-                            movePlayer(currentPlayer, ladder[1]);
-                        }
-                    }
-                } else if(cellsContent[coords[0]][coords[1]].equals(Content.snakeHead)) {
-                    for(int[] snake : snakes) {
-                        if(snake[0] == position) {
-                            gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a snake!⏬\n");
-                            movePlayer(currentPlayer, snake[1]);
-                        }
-                    }
-                } else if(cellsContent[coords[0]][coords[1]].equals(Content.rollAgain)) {
-                    gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a special tile!✨\n");
-                    gameLog.append("Player " + playersTag[currentPlayer] + " must roll again!↺⚀⚅\n");
-                    rollDice();
-                } else if(cellsContent[coords[0]][coords[1]].equals(Content.moveAgain)) {
-                    gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a special tile!✨\n");
-                    gameLog.append("Player " + playersTag[currentPlayer] + " must move again!⏩\n");
-                    int newPosition = calculateNewPosition(playersPosition[currentPlayer], diceSum);
-                    movePlayer(currentPlayer, newPosition);
-                } else if(cellsContent[coords[0]][coords[1]].equals(Content.stop)) {
-                    gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a stop tile!❌\n");
-                    if(denyStopPlayers.contains(currentPlayer)){
-                        gameLog.append("Player " + playersTag[currentPlayer] + " uses a deny stop card to avoid getting stopped!✋\n");
-                        denyStopPlayers.removeFirstOccurrence(currentPlayer);
-                    } else {
-                        gameLog.append("Player " + playersTag[currentPlayer] + " is stopped for 1 turn!⏳\n");
-                        stoppedPlayers.add(currentPlayer);
-                    }
-                } else if(cellsContent[coords[0]][coords[1]].equals(Content.drawCard)) {
-                    gameLog.append("Player " + playersTag[currentPlayer] + " stepped on a card tile!♠♣♥♦\n");
-                    drawCard(currentPlayer, diceSum);
-                }
-            }
-
-            private void drawCard(int currentPlayer, int diceSum) {
-                Random rand = new Random();
-                int card; // there are 4 types of card: stop(0), moveAgain(1), rollAgain(2), denyStop(3)
-                if(specialRules.denyStopCard()) // if the rule isn't active the card denyStop can't be drawn
-                    card = rand.nextInt(0, 4);
-                else
-                    card = rand.nextInt(0, 3);
-                if(card == 0) {
-                    gameLog.append("Player " + playersTag[currentPlayer] + " draws a stop card!❌\n");
-                    if(denyStopPlayers.contains(currentPlayer)){
-                        gameLog.append("Player " + playersTag[currentPlayer] + " uses a deny stop card to avoid getting stopped!✋\n");
-                        denyStopPlayers.removeFirstOccurrence(currentPlayer);
-                    } else {
-                        gameLog.append("Player " + playersTag[currentPlayer] + " is stopped for 1 turn!⏳\n");
-                        stoppedPlayers.add(currentPlayer);
-                    }
-                } else if(card == 1) {
-                    gameLog.append("Player " + playersTag[currentPlayer] + " draws a move again card!⏩\n");
-                    gameLog.append("Player " + playersTag[currentPlayer] + " must move again!⏩\n");
-                    int newPosition = calculateNewPosition(playersPosition[currentPlayer], diceSum);
-                    movePlayer(currentPlayer, newPosition);
-                } else if(card == 2) {
-                    gameLog.append("Player " + playersTag[currentPlayer] + " draws a roll again card!↺⚀⚅\n");
-                    gameLog.append("Player " + playersTag[currentPlayer] + " must roll again!↺⚀⚅\n");
-                    rollDice();
-                } else {
-                    gameLog.append("Player " + playersTag[currentPlayer] + " draws a deny stop card!✋\n");
-                    gameLog.append("Player " + playersTag[currentPlayer] + " will hold this card until needed!✋\n");
-                    denyStopPlayers.add(currentPlayer);
-                }
-            } // draws a card randomly
-
-            private void endGame(int currentPlayer) {
-                String winnerMessage = playerName[currentPlayer] + " (Player " + playersTag[currentPlayer] + ") wins the game!";
-                JOptionPane.showMessageDialog(getGameFrame(), winnerMessage, "Winner!", JOptionPane.INFORMATION_MESSAGE);
-                // exit or restart the game
-                int response = JOptionPane.showConfirmDialog(getGameFrame(), "Do you want to restart this match?", "Restart?", JOptionPane.YES_NO_OPTION);
-                if (response == JOptionPane.YES_OPTION) {
-                    new Game(primaryRules, specialRules);  // reset this game with the same configuration
-                    getGameFrame().dispose();
-                } else {
-                    new GameConfiguration(); // goes back to main menu
-                    getGameFrame().dispose();
-                }
-            }
-
-            abstract void nextTurn();
-
-        }
-
     } // GameFrame contains all the graphic elements of the game
+*/
 
 }
