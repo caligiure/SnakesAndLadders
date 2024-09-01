@@ -34,10 +34,10 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
 
         BoardPanel boardPanel = new BoardPanel(); // panel that contains the cells of the board
         add(boardPanel, BorderLayout.CENTER);
-        JPanel bottomPanel = buildBottomPanel(); // creates a bottom panel that will hold the buttons
-        add(bottomPanel, BorderLayout.SOUTH);
         JPanel sidePanel = buildSidePanel(); // create a side panel to show game log and players table
         add(sidePanel, BorderLayout.EAST);
+        JPanel bottomPanel = buildBottomPanel(); // creates a bottom panel that will hold the buttons
+        add(bottomPanel, BorderLayout.SOUTH);
     }
 
     private void initializeFrame() {

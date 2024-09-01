@@ -4,10 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Refactoring code">
-      <change afterPath="$PROJECT_DIR$/src/GameManager.java" afterDir="false" />
+    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Code refactoring">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GameFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GameManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameManager.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,23 +80,9 @@
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.Main">
-    <configuration name="FirstConfig" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="FirstConfig" />
-      <module name="ScaleESerpenti" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
+  <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main" />
-      <module name="ScaleESerpenti" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="Test" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="Test" />
       <module name="ScaleESerpenti" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -104,8 +91,6 @@
     <recent_temporary>
       <list>
         <item itemvalue="Application.Main" />
-        <item itemvalue="Application.Test" />
-        <item itemvalue="Application.FirstConfig" />
       </list>
     </recent_temporary>
   </component>
@@ -389,7 +374,15 @@
       <option name="project" value="LOCAL" />
       <updated>1725125626099</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="Code refactoring">
+      <option name="closed" value="true" />
+      <created>1725187013840</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1725187013841</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -397,7 +390,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Work in progress in configGame" />
     <MESSAGE value="The class GameConfiguration is complete" />
     <MESSAGE value="Made PrimaryRulesRecord and SpecialRulesRecord outer classes" />
     <MESSAGE value="Configuring GameBoard basic structure" />
@@ -422,7 +414,8 @@
     <MESSAGE value="Starting to work on color's legend" />
     <MESSAGE value="Legend is complete" />
     <MESSAGE value="Refactoring code" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactoring code" />
+    <MESSAGE value="Code refactoring" />
+    <option name="LAST_COMMIT_MESSAGE" value="Code refactoring" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
