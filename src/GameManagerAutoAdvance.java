@@ -1,5 +1,4 @@
 import java.awt.event.ActionEvent;
-import java.util.concurrent.TimeUnit;
 
 class GameManagerAutoAdvance extends GameManager {
     private boolean end;
@@ -10,21 +9,31 @@ class GameManagerAutoAdvance extends GameManager {
 
     @Override
     public void actionPerformed(ActionEvent e) { // begin advancing automatically the game after the user presses the start button
-        while(!end) {
-            rollDice();
-            try {
-                TimeUnit.SECONDS.sleep(3000);
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
-            nextTurn();
-        }
+        AdvancerThread thread = new AdvancerThread();
+        thread.setDaemon(true);
+        thread.start();
     }
 
     @Override
     void endGame(int currentPlayer) {
         end = true;
         super.endGame(currentPlayer);
+    }
+
+    private class AdvancerThread extends Thread {
+        public void run() {
+            while(!end) {
+                rollDice();
+                try {
+                    //noinspection BusyWait
+                    Thread.sleep(3000);
+                } catch (InterruptedException ex) {
+                    throw new RuntimeException(ex);
+                }
+                if(!end)
+                    nextTurn();
+            }
+        }
     }
 
 }

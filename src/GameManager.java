@@ -195,7 +195,7 @@ abstract class GameManager implements ActionListener {
         String winnerMessage = "(Player " + gameFrame.getPlayerTag(currentPlayer) + ") wins the game!";
         JOptionPane.showMessageDialog(gameFrame, winnerMessage, "Winner!", JOptionPane.INFORMATION_MESSAGE);
         // exit or restart the game
-        int response = JOptionPane.showConfirmDialog(gameFrame, "Do you want to restart this match?", "Restart?", JOptionPane.YES_NO_OPTION);
+        int response = JOptionPane.showConfirmDialog(gameFrame, "Do you want to start a new match?", "Restart?", JOptionPane.YES_NO_OPTION);
         if (response == JOptionPane.YES_OPTION) {
             new Game(primaryRules, specialRules);  // reset this game with the same configuration
             gameFrame.dispose();
@@ -207,6 +207,6 @@ abstract class GameManager implements ActionListener {
 
     void nextTurn() {
         nextPlayer = (nextPlayer +1) % primaryRules.nPlayers();  // select the next player
-        gameFrame.appendGameLog("Next Player: " + gameFrame.getPlayerTag(nextPlayer) + ".\n");
+        gameFrame.appendGameLog("--------------\nNext Player: " + gameFrame.getPlayerTag(nextPlayer) + ".\n");
     } // updates the turn
 }
