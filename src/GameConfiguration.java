@@ -31,7 +31,7 @@ public class GameConfiguration {
             // Set buttons
             JButton setButton = new JButton("Start a new configuration");
             setButton.addActionListener(e -> newConfig()); // Add action listener to button
-            JButton loadButton = new JButton("Load an old configuration");
+            JButton loadButton = new JButton("Load a configuration");
             loadButton.addActionListener(e -> loadConfig());
             JButton exitButton = new JButton("Exit");
             exitButton.addActionListener(e -> exitGame());

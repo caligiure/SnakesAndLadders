@@ -1,7 +1,6 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -245,11 +244,11 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
         // add a button to roll the dice (only if autoAdvance is off)
         if( specialRules.autoAdvance() ) {
             JButton startButton = new JButton("Start");
-            startButton.addActionListener(new AutoAdvanceListener(primaryRules, specialRules, this));
+            startButton.addActionListener(new GameManagerAutoAdvance(primaryRules, specialRules, this));
             buttonsPanel.add(startButton);
         } else {
             JButton rollButton = new JButton("Roll Dice");
-            rollButton.addActionListener(new ManualAdvanceListener(primaryRules, specialRules, this));
+            rollButton.addActionListener(new GameManagerManualAdvance(primaryRules, specialRules, this));
             buttonsPanel.add(rollButton);
         }
         return buttonsPanel;
@@ -358,30 +357,5 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
                 return snake[1];
         return -1;
     } // used in GameManager.checkTile, checks if the specified position contains a snake head and returns the position of the tail of the snake
-
-    private class ManualAdvanceListener extends GameManager {
-
-        public ManualAdvanceListener(PrimaryRulesRecord primaryRules, SpecialRulesRecord specialRules, GameFrame gameFrame) {
-            super(primaryRules, specialRules, gameFrame);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            rollDice();
-            nextTurn();
-        }
-    }
-
-    private class AutoAdvanceListener extends GameManager {
-
-        public AutoAdvanceListener(PrimaryRulesRecord primaryRules, SpecialRulesRecord specialRules, GameFrame gameFrame) {
-            super(primaryRules, specialRules, gameFrame);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-
-        }
-    }
 
 } // GameFrame contains all the graphic elements of the game

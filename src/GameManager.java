@@ -191,7 +191,7 @@ abstract class GameManager implements ActionListener {
         }
     } // draws a card randomly
 
-    private void endGame(int currentPlayer) {
+    void endGame(int currentPlayer) {
         String winnerMessage = "(Player " + gameFrame.getPlayerTag(currentPlayer) + ") wins the game!";
         JOptionPane.showMessageDialog(gameFrame, winnerMessage, "Winner!", JOptionPane.INFORMATION_MESSAGE);
         // exit or restart the game
