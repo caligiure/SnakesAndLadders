@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ScaleESerpenti:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ScaleESerpenti_jar</output-path>
+    <root id="archive" name="ScaleESerpenti.jar">
+      <element id="module-output" name="ScaleESerpenti" />
+    </root>
+  </artifact>
+</component>
