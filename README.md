@@ -2,6 +2,7 @@ This is a Snakes and Ladders game implemented in Java.
 The game can be executed by running the Jar file (release version 1.0).
 
 Snakes and Ladders Rules:
+                
                 1.  Each player starts at the bottom left corner (tile 1).
                 2.  Players take turns rolling the dice and moving forward by the sum of the numbers rolled.
                 3.  The first player to reach the last cell wins the game, but it must be reached with an exact number of steps.
