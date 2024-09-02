@@ -1,5 +1,5 @@
 This is a Snakes and Ladders game implemented in Java.
-The game can be executed by running the Jar file (release version 1.0).
+The game can be executed by running the Jar file (releases).
 
 Snakes and Ladders Rules:
                 
