@@ -34,7 +34,7 @@ abstract class GameManager implements ActionListener {
             if (specialRules.singleDice() && currentPosition >= primaryRules.nRows() * primaryRules.nCols() - 6) // if the player is on one of the last 6 cells and the rule singleDice is active
                 diceSum = sumDices(currentPlayer, 1);
             else
-                diceSum = sumDices(currentPlayer, primaryRules.nDices());
+                diceSum = sumDices(currentPlayer, primaryRules.nDice());
             if (specialRules.doubleSix() && diceSum == 12) { // if the rule doubleSix is active
                 gameFrame.appendGameLog("Player " + gameFrame.getPlayerTag(currentPlayer) + " got a double six!⚅⚅\n");
                 doubleSix = true;
@@ -49,7 +49,7 @@ abstract class GameManager implements ActionListener {
 
     private int sumDices(int currentPlayer, int nDices) {
         Random rand = new Random();
-        int diceSum = 0; // sums the total of nDices
+        int diceSum = 0; // sums the total of nDice
         StringBuilder visualResult = new StringBuilder();
         for (int i = 0; i < nDices; i++) {
             int res = rand.nextInt(1,7);

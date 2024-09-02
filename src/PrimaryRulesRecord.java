@@ -4,7 +4,7 @@ public record PrimaryRulesRecord(
         int nPlayers,
         int nRows,
         int nCols,
-        int nDices,
+        int nDice,
         int nLadders,
         int nSnakes
 ) implements Serializable {}

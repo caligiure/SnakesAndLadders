@@ -10,12 +10,13 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
     private final String[] playersName; // used in playersTable
     private final String[] playersTag; // used in playersTable
     private DefaultTableModel playersTable;
-    private final JTextArea gameLog = new JTextArea();  // Text area for gameLog
+    private JButton actionButton; // button to start the game and roll the dice
     // elements to represent and visualize snakes, ladders and special cells
     private final JLabel[][] cells; // create matrix of labels;
     private final LinkedList<int[]> ladders = new LinkedList<>(); // bottom and top position of every ladder
     private final LinkedList<int[]> snakes = new LinkedList<>(); // head and tail position of every snake
     private final Content[][] cellsContent; // the type of content of every cell
+    private final JTextArea gameLog = new JTextArea();  // Text area for gameLog
 
     public GameFrame(PrimaryRulesRecord primaryRules, SpecialRulesRecord specialRules, String[] playersName) {
         this.primaryRules = primaryRules;
@@ -63,13 +64,13 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
         // choose randomly the bottom and top point of every ladder, avoiding the cells that already contain something
         // the first and last cell of the board cannot contain ladders
         for(int i = 0; i< primaryRules.nLadders(); i++) {
-            int ladderBottom = putInRandomEmptyPosition(2, nRows*nCols-1, Content.ladderBottom); // the second-last cell can't contain the bottom of a ladder
+            int ladderBottom = putInRandomEmptyPosition(2, (nRows*nCols)-nCols+1, Content.ladderBottom); // the top row can't contain the bottom of a ladder
             int ladderTop = putInRandomEmptyPosition(ladderBottom+1, nRows*nCols, Content.ladderTop); // ladderTop must be after startingPoint
             ladders.add( new int[]{ladderBottom, ladderTop} ); // add ladder to ladders list
         }
         // choose randomly the head and tail point of every snake, avoiding the cells that already contain something
         for(int i = 0; i< primaryRules.nSnakes(); i++) {
-            int snakeHead = putInRandomEmptyPosition(2, nRows*nCols, Content.snakeHead); // the first and final cells cannot be a head point for a snake
+            int snakeHead = putInRandomEmptyPosition(nCols+1, nRows*nCols, Content.snakeHead); // the first row cannot contain the head of a snake
             int snakeTail = putInRandomEmptyPosition(1, snakeHead, Content.snakeTail); // snakeTail must be before headPoint
             snakes.add( new int[]{snakeHead, snakeTail} ); // add snake to snakes list
         }
@@ -93,14 +94,36 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
 
     private int putInRandomEmptyPosition(int origin, int bound, Content content){
         Random random = new Random();
-        int position = random.nextInt(origin, bound);
-        int[] coords = findCoordinates(position, primaryRules.nRows(), primaryRules.nCols());
-        while ( !cellsContent[coords[0]][coords[1]].equals(Content.empty) ) {
-            position = random.nextInt(origin, bound);
-            coords = findCoordinates(position, primaryRules.nRows(), primaryRules.nCols());
+        if(content.equals(Content.ladderTop)){ // a ladderTop must be placed on a row above ladderBottom
+            int[] originCoords = findCoordinates(origin, primaryRules.nRows(), primaryRules.nCols());
+            int position = random.nextInt(origin, bound);
+            int[] coords = findCoordinates(position, primaryRules.nRows(), primaryRules.nCols());
+            while ( !cellsContent[coords[0]][coords[1]].equals(Content.empty) && coords[0]>originCoords[0]) {
+                position = random.nextInt(origin, bound);
+                coords = findCoordinates(position, primaryRules.nRows(), primaryRules.nCols());
+            }
+            cellsContent[coords[0]][coords[1]] = content;
+            return position;
+        } else if (content.equals(Content.snakeTail)) { // a snakeTail must be placed on a row below snakeHead
+            int[] originCoords = findCoordinates(origin, primaryRules.nRows(), primaryRules.nCols());
+            int position = random.nextInt(origin, bound);
+            int[] coords = findCoordinates(position, primaryRules.nRows(), primaryRules.nCols());
+            while ( !cellsContent[coords[0]][coords[1]].equals(Content.empty) && coords[0]<originCoords[0]) {
+                position = random.nextInt(origin, bound);
+                coords = findCoordinates(position, primaryRules.nRows(), primaryRules.nCols());
+            }
+            cellsContent[coords[0]][coords[1]] = content;
+            return position;
+        } else {
+            int position = random.nextInt(origin, bound);
+            int[] coords = findCoordinates(position, primaryRules.nRows(), primaryRules.nCols());
+            while ( !cellsContent[coords[0]][coords[1]].equals(Content.empty) ) {
+                position = random.nextInt(origin, bound);
+                coords = findCoordinates(position, primaryRules.nRows(), primaryRules.nCols());
+            }
+            cellsContent[coords[0]][coords[1]] = content;
+            return position;
         }
-        cellsContent[coords[0]][coords[1]] = content;
-        return position;
     } // used in randomizeCellsContent, chooses a random empty cell and puts the specified content inside it, then returns the position of the cell
 
     private int getNumOfSpecialCellsPerType(int nRows, int nCols) {
@@ -241,16 +264,20 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
         buttonsPanel.add(rulesButton);
         // add a button to roll the dice (only if autoAdvance is off)
         if( specialRules.autoAdvance() ) {
-            JButton startButton = new JButton("Start");
-            startButton.addActionListener(new GameManagerAutoAdvance(primaryRules, specialRules, this));
-            buttonsPanel.add(startButton);
+            actionButton = new JButton("Start");
+            actionButton.addActionListener(new GameManagerAutoAdvance(primaryRules, specialRules, this));
+            buttonsPanel.add(actionButton);
         } else {
-            JButton rollButton = new JButton("Roll Dice");
-            rollButton.addActionListener(new GameManagerManualAdvance(primaryRules, specialRules, this));
-            buttonsPanel.add(rollButton);
+            actionButton = new JButton("Roll Dice");
+            actionButton.addActionListener(new GameManagerManualAdvance(primaryRules, specialRules, this));
+            buttonsPanel.add(actionButton);
         }
         return buttonsPanel;
     } // builds the bottom panel containing the buttons
+
+    public JButton getActionButton() {
+        return actionButton;
+    } // used by AutoAdvanceGameManager to change the button's function
 
     private void showRules() {
         JFrame rulesFrame = new JFrame("Snakes and Ladders Rules"); // Create a new JFrame for the rules
@@ -335,14 +362,13 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
 
     private JScrollPane buildLegendTable() {
         String[] columnNames = {"Color", "Meaning"};
-        String[][] data = new String[7][2];
+        String[][] data = new String[6][2];
         data[0][0] = "BLUE"; data[0][1] = "Roll Again ↺⚀⚅";
         data[1][0] = "CYAN"; data[1][1] = "Move Again ⏩";
         data[2][0] = "MAGENTA"; data[2][1] = "Stop ❌⏳";
         data[3][0] = "YELLOW"; data[3][1] = "Draw card ♠♣♥♦";
         data[4][0] = "RED"; data[4][1] = "Snake ⏬";
         data[5][0] = "GREEN"; data[5][1] = "Ladder ⏫";
-        data[6][0] = "DENY STOP"; data[6][1] = "Denies a Stop ✋";
         DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
         JTable table = new JTable(tableModel); // contains the default table model
         table.setDefaultEditor(Object.class, null);

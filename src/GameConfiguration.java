@@ -6,7 +6,7 @@ public class GameConfiguration {
     // Since the Special Rules depend on the values of the Primary Rules,
     // the user must first set the Primary Rules
     // Example: The "singleDice" special rule can't be enabled
-    // unless the "nDices" primary rule is set on a number greater than 1
+    // unless the "nDice" primary rule is set on a number greater than 1
     private PrimaryRulesRecord primaryRules;
     private SpecialRulesRecord specialRules;
 
@@ -107,7 +107,7 @@ public class GameConfiguration {
             laddersField = new JTextField(""+primaryRules.nLadders());
             snakesField = new JTextField(""+primaryRules.nSnakes());
             diceComboBox = new JComboBox<>(new String[] {"1", "2"});
-            diceComboBox.setSelectedIndex(primaryRules.nDices() - 1);
+            diceComboBox.setSelectedIndex(primaryRules.nDice() - 1);
             JButton nextButton = new JButton("Next");
             nextButton.addActionListener(e -> nextFrame());
             JButton backButton = new JButton("Back");
@@ -123,7 +123,7 @@ public class GameConfiguration {
             panel.add(laddersField);
             panel.add(new JLabel("Number of snakes:"));
             panel.add(snakesField);
-            panel.add(new JLabel("Number of dices:"));
+            panel.add(new JLabel("Number of dice:"));
             panel.add(diceComboBox);
             panel.add(backButton);
             panel.add(nextButton);
@@ -138,9 +138,9 @@ public class GameConfiguration {
                 int numCols = Integer.parseInt(columnsField.getText());
                 int numLadders = Integer.parseInt(laddersField.getText());
                 int numSnakes = Integer.parseInt(snakesField.getText());
-                int numDices = diceComboBox.getSelectedIndex() + 1;
-                if (numDices < 1)
-                    numDices = 1;
+                int numDice = diceComboBox.getSelectedIndex() + 1;
+                if (numDice < 1)
+                    numDice = 1;
                 if (numPlayers <= 0)
                     JOptionPane.showMessageDialog(this, "The number of players cannot be 0.",
                             "Invalid Number of Players", JOptionPane.ERROR_MESSAGE);
@@ -153,7 +153,7 @@ public class GameConfiguration {
                             "Too many snakes and ladders", JOptionPane.ERROR_MESSAGE);
                 else {
                     // Save the values in the primaryRules record
-                    primaryRules = new PrimaryRulesRecord(numPlayers, numRows, numCols, numDices, numLadders, numSnakes);
+                    primaryRules = new PrimaryRulesRecord(numPlayers, numRows, numCols, numDice, numLadders, numSnakes);
                     // next frame
                     JFrame specialRulesFrame = new SpecialRulesFrame();
                     specialRulesFrame.setVisible(true);
@@ -192,10 +192,10 @@ public class GameConfiguration {
             // Fields panel
             JPanel panel = new JPanel(new GridLayout(11, 1, 10, 10));
             // Rules fields
-            autoAdvanceCheckBox = new JCheckBox("Automatically roll the dices and advance", specialRules.autoAdvance());
-            singleDiceCheckBox = new JCheckBox("Use a single dice in the last 6 tiles", specialRules.singleDice());
+            autoAdvanceCheckBox = new JCheckBox("Automatically roll the dice and advance", specialRules.autoAdvance());
+            singleDiceCheckBox = new JCheckBox("Use a single die in the last 6 tiles", specialRules.singleDice());
             doubleSixCheckBox = new JCheckBox("Double Roll if you get Double Six", specialRules.doubleSix());
-            if( primaryRules.nDices() < 2 ) { // rules not compatible with the use of a single dice
+            if( primaryRules.nDice() < 2 ) { // rules not compatible with the use of a single dice
                 singleDiceCheckBox.setEnabled(false);
                 singleDiceCheckBox.setSelected(false);
                 doubleSixCheckBox.setEnabled(false);
