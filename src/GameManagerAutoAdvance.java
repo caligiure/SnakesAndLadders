@@ -1,17 +1,17 @@
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
 class GameManagerAutoAdvance extends GameManager {
     private boolean running = false;
     private final JButton actionButton;
     private final AdvancerThread advancerThread;
-    private final Semaphore run = new Semaphore(1);
 
     public GameManagerAutoAdvance(PrimaryRulesRecord primaryRules, SpecialRulesRecord specialRules, GameFrame gameFrame) {
         super(primaryRules, specialRules, gameFrame);
         actionButton = gameFrame.getActionButton();
         advancerThread = new AdvancerThread();
+        advancerThread.setDaemon(true);
     }
 
     private synchronized boolean getRunning() {
@@ -24,24 +24,15 @@ class GameManagerAutoAdvance extends GameManager {
 
     @Override
     public void actionPerformed(ActionEvent e) { // begin advancing automatically the game after the user presses the start button
-        if(!getRunning()) { // if the game is not running
-            actionButton.setEnabled(false);
-            setRunning(true);
-            advancerThread.setDaemon(true);
+        actionButton.setEnabled(false);
+        setRunning(true);
+        try {
             advancerThread.start();
-            actionButton.setText("Pause");
-            actionButton.setEnabled(true);
-        } else {
-            actionButton.setEnabled(false);
-            setRunning(false);
-            actionButton.setText("Resume");
-            actionButton.setEnabled(true);
-        }
+        } catch (IllegalThreadStateException ignored) {}
     }
 
     @Override
     void endGame(int currentPlayer) {
-        actionButton.setEnabled(false);
         setRunning(false);
         super.endGame(currentPlayer);
     }
@@ -49,16 +40,15 @@ class GameManagerAutoAdvance extends GameManager {
     private class AdvancerThread extends Thread {
         public void run() {
             while(getRunning()) {
+                rollDice();
                 try {
-                    run.acquire();
-                    rollDice();
-                    //noinspection BusyWait
-                    Thread.sleep(3000);
-                    nextTurn();
-                    run.release();
+                    TimeUnit.SECONDS.sleep(3);
+                    //Thread.sleep(3000);
                 } catch (InterruptedException ex) {
                     throw new RuntimeException(ex);
                 }
+                if(getRunning())
+                    nextTurn();
             }
         }
     }

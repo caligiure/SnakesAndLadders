@@ -115,11 +115,11 @@ public class GameConfiguration {
             // Add fields to panel
             panel.add(new JLabel("Number of players:"));
             panel.add(playersField);
-            panel.add(new JLabel("Number of Rows:"));
+            panel.add(new JLabel("Number of rows:"));
             panel.add(rowsField);
-            panel.add(new JLabel("Number of Columns:"));
+            panel.add(new JLabel("Number of columns:"));
             panel.add(columnsField);
-            panel.add(new JLabel("Number of stairs:"));
+            panel.add(new JLabel("Number of ladders:"));
             panel.add(laddersField);
             panel.add(new JLabel("Number of snakes:"));
             panel.add(snakesField);
@@ -147,9 +147,9 @@ public class GameConfiguration {
                 else if (numRows < 3 || numCols < 3)
                     JOptionPane.showMessageDialog(this, "Rows and Columns values must be at least 3.",
                             "Invalid Rows and Columns", JOptionPane.ERROR_MESSAGE);
-                else if ( ((numLadders + numSnakes) * 2) > ((numCols * numRows) - 2) )
+                else if ( (numLadders + numSnakes) > ((numCols-2) * (numRows/2)) )
                     JOptionPane.showMessageDialog(this,
-                            "A "+numRows+"x"+numCols+" board can contain a maximum of "+(((numCols*numRows)-2)/2)+" elements, summing both snakes and ladders",
+                            "A "+numRows+"x"+numCols+" board can contain a maximum of "+( (numCols-2) * (numRows/2) )+" elements, summing both snakes and ladders",
                             "Too many snakes and ladders", JOptionPane.ERROR_MESSAGE);
                 else {
                     // Save the values in the primaryRules record

@@ -95,25 +95,25 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
     private int putInRandomEmptyPosition(int origin, int bound, Content content){
         Random random = new Random();
         if(content.equals(Content.ladderTop)){ // a ladderTop must be placed on a row above ladderBottom
-            int[] originCoords = findCoordinates(origin, primaryRules.nRows(), primaryRules.nCols());
-            int position = random.nextInt(origin, bound);
-            int[] coords = findCoordinates(position, primaryRules.nRows(), primaryRules.nCols());
-            while ( !cellsContent[coords[0]][coords[1]].equals(Content.empty) && coords[0]>originCoords[0]) {
-                position = random.nextInt(origin, bound);
-                coords = findCoordinates(position, primaryRules.nRows(), primaryRules.nCols());
+            int[] bottomCoords = findCoordinates(origin, primaryRules.nRows(), primaryRules.nCols());
+            int topPosition = random.nextInt(origin, bound);
+            int[] topCoords = findCoordinates(topPosition, primaryRules.nRows(), primaryRules.nCols());
+            while ( !(cellsContent[topCoords[0]][topCoords[1]].equals(Content.empty)) || topCoords[0]==bottomCoords[0]) {
+                topPosition = random.nextInt(origin, bound);
+                topCoords = findCoordinates(topPosition, primaryRules.nRows(), primaryRules.nCols());
             }
-            cellsContent[coords[0]][coords[1]] = content;
-            return position;
+            cellsContent[topCoords[0]][topCoords[1]] = content;
+            return topPosition;
         } else if (content.equals(Content.snakeTail)) { // a snakeTail must be placed on a row below snakeHead
-            int[] originCoords = findCoordinates(origin, primaryRules.nRows(), primaryRules.nCols());
-            int position = random.nextInt(origin, bound);
-            int[] coords = findCoordinates(position, primaryRules.nRows(), primaryRules.nCols());
-            while ( !cellsContent[coords[0]][coords[1]].equals(Content.empty) && coords[0]<originCoords[0]) {
-                position = random.nextInt(origin, bound);
-                coords = findCoordinates(position, primaryRules.nRows(), primaryRules.nCols());
+            int[] headCoords = findCoordinates(bound, primaryRules.nRows(), primaryRules.nCols());
+            int tailposition = random.nextInt(origin, bound);
+            int[] tailCoords = findCoordinates(tailposition, primaryRules.nRows(), primaryRules.nCols());
+            while ( !(cellsContent[tailCoords[0]][tailCoords[1]].equals(Content.empty)) || tailCoords[0]==headCoords[0]) {
+                tailposition = random.nextInt(origin, bound);
+                tailCoords = findCoordinates(tailposition, primaryRules.nRows(), primaryRules.nCols());
             }
-            cellsContent[coords[0]][coords[1]] = content;
-            return position;
+            cellsContent[tailCoords[0]][tailCoords[1]] = content;
+            return tailposition;
         } else {
             int position = random.nextInt(origin, bound);
             int[] coords = findCoordinates(position, primaryRules.nRows(), primaryRules.nCols());
