@@ -28,7 +28,7 @@ abstract class GameManager implements ActionListener {
         int diceSum;
         boolean doubleSix = false;
         if(stoppedPlayers.contains(currentPlayer)) {
-            gameFrame.appendGameLog("Player " + gameFrame.getPlayerTag(currentPlayer) + " is stopped and will play on the next turn.\n");
+            gameFrame.appendGameLog("Player " + gameFrame.getPlayerTag(currentPlayer) + " is stopped and must wait ⏳.\n");
             stoppedPlayers.removeFirstOccurrence(currentPlayer);
         } else {
             if (specialRules.singleDice() && currentPosition >= primaryRules.nRows() * primaryRules.nCols() - 6) // if the player is on one of the last 6 cells and the rule singleDice is active
@@ -144,13 +144,24 @@ abstract class GameManager implements ActionListener {
             gameFrame.appendGameLog("Player " + gameFrame.getPlayerTag(currentPlayer) + " must move again!⏩\n");
             int newPosition = calculateNewPosition(playersPosition[currentPlayer], diceSum);
             movePlayer(currentPlayer, newPosition, diceSum);
-        } else if(content.equals(Content.stop)) {
-            gameFrame.appendGameLog("Player " + gameFrame.getPlayerTag(currentPlayer) + " stepped on a stop tile!❌\n");
+        } else if(content.equals(Content.bench)) {
+            gameFrame.appendGameLog("Player " + gameFrame.getPlayerTag(currentPlayer) + " stepped on a bench tile!❌\n");
             if(hasDenyStopPlayers.contains(currentPlayer)){
                 gameFrame.appendGameLog("Player " + gameFrame.getPlayerTag(currentPlayer) + " uses a deny stop card to avoid getting stopped!✋\n");
                 hasDenyStopPlayers.removeFirstOccurrence(currentPlayer);
             } else {
                 gameFrame.appendGameLog("Player " + gameFrame.getPlayerTag(currentPlayer) + " is stopped for 1 turn!⏳\n");
+                stoppedPlayers.add(currentPlayer);
+            }
+        } else if (content.equals(Content.tavern)) {
+            gameFrame.appendGameLog("Player " + gameFrame.getPlayerTag(currentPlayer) + " stepped on a tavern tile!❌\n");
+            if (hasDenyStopPlayers.contains(currentPlayer)) {
+                gameFrame.appendGameLog("Player " + gameFrame.getPlayerTag(currentPlayer) + " uses a deny stop card to avoid getting stopped!✋\n");
+                hasDenyStopPlayers.removeFirstOccurrence(currentPlayer);
+            } else {
+                gameFrame.appendGameLog("Player " + gameFrame.getPlayerTag(currentPlayer) + " is stopped for 3 turns!⏳\n");
+                stoppedPlayers.add(currentPlayer);
+                stoppedPlayers.add(currentPlayer);
                 stoppedPlayers.add(currentPlayer);
             }
         } else if(content.equals(Content.drawCard)) {

@@ -185,7 +185,7 @@ public class GameConfiguration {
         public SpecialRulesFrame() {
             // Set the JFrame
             setTitle("Select special rules");
-            setSize(600, 600);
+            setSize(650, 600);
             setLocationRelativeTo(null); // sets the location of this frame at the center of the screen
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setLayout(new BorderLayout());
@@ -193,19 +193,19 @@ public class GameConfiguration {
             JPanel panel = new JPanel(new GridLayout(11, 1, 10, 10));
             // Rules fields
             autoAdvanceCheckBox = new JCheckBox("Automatically roll the dice and advance", specialRules.autoAdvance());
-            singleDiceCheckBox = new JCheckBox("Use a single die in the last 6 tiles", specialRules.singleDice());
-            doubleSixCheckBox = new JCheckBox("Double Roll if you get Double Six", specialRules.doubleSix());
+            singleDiceCheckBox = new JCheckBox("Use a single die in the last 6 tiles, to reduce the risk of overshooting", specialRules.singleDice());
+            doubleSixCheckBox = new JCheckBox("If you got double six, you can roll the dice a second time and move again before ending your turn", specialRules.doubleSix());
             if( primaryRules.nDice() < 2 ) { // rules not compatible with the use of a single dice
                 singleDiceCheckBox.setEnabled(false);
                 singleDiceCheckBox.setSelected(false);
                 doubleSixCheckBox.setEnabled(false);
                 doubleSixCheckBox.setSelected(false);
             }
-            stopTilesCheckBox = new JCheckBox("Add Stopping tiles: bench stops you for 1 turn, tavern stops you for 3 turns", specialRules.stopTiles());
-            moveAgainCheckBox = new JCheckBox("Add special tiles that let you move again without rolling the dice", specialRules.moveAgainTiles());
-            rollAgainCheckBox = new JCheckBox("Add special tiles that let you roll the dice again", specialRules.rollAgainTiles());
+            stopTilesCheckBox = new JCheckBox("Add stop tiles: bench stops you for 1 turn, tavern stops you for 3 turns", specialRules.stopTiles());
+            moveAgainCheckBox = new JCheckBox("Add 'move again' tiles that let you move again without rolling the dice", specialRules.moveAgainTiles());
+            rollAgainCheckBox = new JCheckBox("Add 'roll again' tiles that let you roll the dice a second time and move again", specialRules.rollAgainTiles());
             addCardsCheckBox = new JCheckBox("Add special tiles that let you draw a card", specialRules.addCards());
-            denyStopCardCheckBox = new JCheckBox("Add a denyStop card that you can keep to avoid getting stopped", specialRules.denyStopCard());
+            denyStopCardCheckBox = new JCheckBox("Add a 'deny stop' card that you can use to avoid getting stopped", specialRules.denyStopCard());
             if( !addCardsCheckBox.isSelected() ) {
                 denyStopCardCheckBox.setEnabled(false);
                 denyStopCardCheckBox.setSelected(false);

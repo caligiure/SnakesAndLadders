@@ -75,10 +75,11 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
             snakes.add( new int[]{snakeHead, snakeTail} ); // add snake to snakes list
         }
         // initialize special Cells
-        int numOfSpecialCellsPerType = getNumOfSpecialCellsPerType(nRows, nCols); // there are four types of special cells
+        int numOfSpecialCellsPerType = getNumOfSpecialCellsPerType(nRows, nCols);
         for(int i=0; i<numOfSpecialCellsPerType; i++) {
             if(specialRules.stopTiles()) { // a type of content must be added only if the relative rule is active
-                putInRandomEmptyPosition(2, nRows*nCols, Content.stop); // first and last cell can't contain a special item
+                putInRandomEmptyPosition(2, nRows*nCols, Content.bench); // first and last cell can't contain a special item
+                putInRandomEmptyPosition(2, nRows*nCols, Content.tavern);
             }
             if(specialRules.moveAgainTiles()) {
                 putInRandomEmptyPosition(2, nRows*nCols, Content.moveAgain);
@@ -133,7 +134,7 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
         if (numOfEmptyCells < maxNumOfSpecialCells) {
             maxNumOfSpecialCells = numOfEmptyCells;
         }
-        return maxNumOfSpecialCells / 4; // there are four types of special cells
+        return maxNumOfSpecialCells / 5; // there are five types of special cells: moveAgain, rollAgain, drawCard, bench, tavern
     } // used in randomizeCellsContent, returns the number of special cells of every type which can be added to the board, based on the dimensions of the board and the number of snakes and ladders
 
     public static int[] findCoordinates(int position, int nRows, int nCols) {
@@ -176,12 +177,6 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
                     String text = "<html>" + cellLabel + ")</html>";
                     cells[i][j] = new JLabel(text, SwingConstants.CENTER);
                     cells[i][j].setBorder(BorderFactory.createLineBorder(Color.BLACK));
-                    if(cellsContent[i][j].equals(Content.rollAgain))
-                        cells[i][j].setBackground(Color.BLUE);
-                    if(cellsContent[i][j].equals(Content.moveAgain))
-                        cells[i][j].setBackground(Color.CYAN);
-                    if(cellsContent[i][j].equals(Content.stop))
-                        cells[i][j].setBackground(Color.MAGENTA);
                     add(cells[i][j]);
                 }
             }
@@ -237,7 +232,9 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
                             g.setColor(Color.BLUE);
                         else if (content.equals(Content.moveAgain))
                             g.setColor(Color.CYAN);
-                        else if (content.equals(Content.stop))
+                        else if (content.equals(Content.tavern))
+                            g.setColor(Color.ORANGE);
+                        else if (content.equals(Content.bench))
                             g.setColor(Color.MAGENTA);
                         else if (content.equals(Content.drawCard))
                             g.setColor(Color.YELLOW);
@@ -305,12 +302,13 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
                 5.  If a player lands on the head of a snake (RED tiles), they slide down to the tail of the snake ⏬.
                 6.  If a player lands on a BLUE tile, they must ROLL AGAIN the dice ↺⚀⚅.
                 7.  If a player lands on a CYAN tile, they must MOVE AGAIN ⏩ by the same number of steps they already moved.
-                8.  If a player lands on a MAGENTA tile, they must STOP ❌.
-                     A stopped player will have to wait ⏳ for a turn before being able to move again.
+                8.  If a player lands on a MAGENTA tile (BENCH), they must STOP ❌ for 1 turn.
+                     If a player lands on an ORANGE tile (TAVERN), they must STOP ❌ for 3 turns.
+                     A stopped player will have to wait ⏳ before being able to move again.
                      A player can avoid getting stopped if they have a DENY STOP ✋ card.
                 9.  If a player lands on a YELLOW tile, they must DRAW A CARD ♠♣♥♦.
                      There are 4 types of cards: ROLL AGAIN ↺⚀⚅, MOVE AGAIN ⏩, STOP ❌ and DENY STOP ✋.
-                     The first 3 types of card have the same effect of the tile with the same name.
+                     The first 3 types of card have the same effect of their similar tile.
                      The DENY STOP card is a special card that the player can hold in their hands until needed.
                      When that player gets stopped, they will consume their DENY STOP ✋ card and avoid getting stopped.
                 10. If a player rolled a DOUBLE SIX, at the end of their turn they will roll the dice a second time and move again.
@@ -362,13 +360,14 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
 
     private JScrollPane buildLegendTable() {
         String[] columnNames = {"Color", "Meaning"};
-        String[][] data = new String[6][2];
+        String[][] data = new String[7][2];
         data[0][0] = "BLUE"; data[0][1] = "Roll Again ↺⚀⚅";
         data[1][0] = "CYAN"; data[1][1] = "Move Again ⏩";
-        data[2][0] = "MAGENTA"; data[2][1] = "Stop ❌⏳";
-        data[3][0] = "YELLOW"; data[3][1] = "Draw card ♠♣♥♦";
-        data[4][0] = "RED"; data[4][1] = "Snake ⏬";
-        data[5][0] = "GREEN"; data[5][1] = "Ladder ⏫";
+        data[2][0] = "MAGENTA"; data[2][1] = "BENCH ❌⏳";
+        data[3][0] = "ORANGE"; data[3][1] = "TAVERN ❌⏳";
+        data[4][0] = "YELLOW"; data[4][1] = "Draw card ♠♣♥♦";
+        data[5][0] = "RED"; data[5][1] = "Snake ⏬";
+        data[6][0] = "GREEN"; data[6][1] = "Ladder ⏫";
         DefaultTableModel tableModel = new DefaultTableModel(data, columnNames);
         JTable table = new JTable(tableModel); // contains the default table model
         table.setDefaultEditor(Object.class, null);
