@@ -9,7 +9,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Improved the assignment of snakes and ladders positions" />
+    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Added a clear distinction between bench and tavern tiles" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -127,7 +127,7 @@
       <workItem from="1725102539005" duration="17995000" />
       <workItem from="1725260048272" duration="8991000" />
       <workItem from="1725283204386" duration="8393000" />
-      <workItem from="1725377789119" duration="2468000" />
+      <workItem from="1725377789119" duration="2560000" />
     </task>
     <task id="LOCAL-00001" summary="The board gridLayout is working!">
       <option name="closed" value="true" />
@@ -465,7 +465,15 @@
       <option name="project" value="LOCAL" />
       <updated>1725380254164</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="Added a clear distinction between bench and tavern tiles">
+      <option name="closed" value="true" />
+      <created>1725380311310</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1725380311310</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -484,7 +492,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Rolling the dice" />
     <MESSAGE value="Moving players works" />
     <MESSAGE value="Working on gamelog" />
     <MESSAGE value="Endgame done" />
@@ -509,7 +516,8 @@
     <MESSAGE value="Added rules frame" />
     <MESSAGE value="Built jar" />
     <MESSAGE value="Improved the assignment of snakes and ladders positions" />
-    <option name="LAST_COMMIT_MESSAGE" value="Improved the assignment of snakes and ladders positions" />
+    <MESSAGE value="Added a clear distinction between bench and tavern tiles" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added a clear distinction between bench and tavern tiles" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
