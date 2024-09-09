@@ -1,5 +1,19 @@
 This is a Snakes and Ladders game implemented in Java.
-The game can be executed by running the Jar file (releases).
+- To start the game, run the ScaleESerpenti.jar file (you can find it in the latest release).
+- In the first menu of the game you have two options:
+  - Start a new configuration of the game rules (recommended choice)
+  - Load an old configuration from the file system (select this option only if you have already used this software)
+- In the subsequent menus you'll be able to configure all the rules and settings of the game.
+It's important to choose if you want to play in "Manual Mode", in which you'll have to press the button to roll the dice at every turn, or if you want to
+play in "Automatic Mode", in which case you'll just press the start button and the system will automatically roll the dice and advance the game every few seconds.
+If you check the "Automatically roll the dice and advance" setting the game will be set in Automatic Mode.
+- At the end of the configuration you can use the "Save" button to save the configuration in a file.
+- Use the "Start" button to start the game. The first thing you'll have to do is to insert a name for each one of the player,
+but you can also choose to leave the default name.
+- After choosing the names, the game board will appear on the left side of the screen, while on the right side you will see the
+player's table, the legend of the colours and the game log with all the infos on what is happening in the game.
+At the bottom of the screen you will find the "Rules" button which you can use to read the game rules and the "Roll Dice"/"Start" button,
+depending on the game mode you have selected during the configuration.
 
 Snakes and Ladders Rules:
 
