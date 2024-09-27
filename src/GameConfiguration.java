@@ -1,10 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
-import java.io.*;
 
 public class GameConfiguration {
-    private ConcRules rules;
-    private ConfigurationCareTaker careTaker;
+    private final ConcRules rules;
+    private final ConfigurationCareTaker careTaker;
 
     public GameConfiguration(Rules r, ConfigurationCareTaker careTaker) {
         if(r == null)
@@ -37,7 +36,7 @@ public class GameConfiguration {
             setTitle("Configure the rules of the game");
             setExtendedState(JFrame.MAXIMIZED_BOTH);
             // Primary fields
-            JPanel panel1 = new JPanel(new GridLayout(6, 2, 10, 10));
+            JPanel panel = new JPanel(new GridLayout(11, 2, 10, 10));
             playersField = new JTextField(""+ rules.nPlayers);
             rowsField = new JTextField(""+ rules.nRows);
             columnsField = new JTextField(""+ rules.nCols);
@@ -46,20 +45,19 @@ public class GameConfiguration {
             diceComboBox = new JComboBox<>(new String[] {"1", "2"});
             diceComboBox.setSelectedIndex(rules.nDice - 1);
             // Add fields to panel
-            panel1.add(new JLabel("Number of players:"));
-            panel1.add(playersField);
-            panel1.add(new JLabel("Number of rows:"));
-            panel1.add(rowsField);
-            panel1.add(new JLabel("Number of columns:"));
-            panel1.add(columnsField);
-            panel1.add(new JLabel("Number of ladders:"));
-            panel1.add(laddersField);
-            panel1.add(new JLabel("Number of snakes:"));
-            panel1.add(snakesField);
-            panel1.add(new JLabel("Number of dice:"));
-            panel1.add(diceComboBox);
+            panel.add(new JLabel("Number of players:"));
+            panel.add(playersField);
+            panel.add(new JLabel("Number of rows:"));
+            panel.add(rowsField);
+            panel.add(new JLabel("Number of columns:"));
+            panel.add(columnsField);
+            panel.add(new JLabel("Number of ladders:"));
+            panel.add(laddersField);
+            panel.add(new JLabel("Number of snakes:"));
+            panel.add(snakesField);
+            panel.add(new JLabel("Number of dice:"));
+            panel.add(diceComboBox);
             // Secondary fields
-            JPanel panel2 = new JPanel(new GridLayout(8, 1, 10, 10));
             autoAdvanceCheckBox = new JCheckBox("Automatically roll the dice and advance", rules.autoAdvance);
             singleDieCheckBox = new JCheckBox("Use a single die in the last 6 tiles, to reduce the risk of overshooting", rules.singleDice);
             doubleSixCheckBox = new JCheckBox("If you got double six, you can roll the dice a second time and move again before ending your turn", rules.doubleSix);
@@ -96,28 +94,24 @@ public class GameConfiguration {
                 }
             });
             // Add fields to panel
-            panel2.add(autoAdvanceCheckBox);
-            panel2.add(singleDieCheckBox);
-            panel2.add(doubleSixCheckBox);
-            panel2.add(stopTilesCheckBox);
-            panel2.add(moveAgainCheckBox);
-            panel2.add(rollAgainCheckBox);
-            panel2.add(addCardsCheckBox);
-            panel2.add(denyStopCardCheckBox);
+            panel.add(autoAdvanceCheckBox);
+            panel.add(singleDieCheckBox);
+            panel.add(doubleSixCheckBox);
+            panel.add(stopTilesCheckBox);
+            panel.add(moveAgainCheckBox);
+            panel.add(rollAgainCheckBox);
+            panel.add(addCardsCheckBox);
+            panel.add(denyStopCardCheckBox);
             // Buttons panel
-            JPanel panel3 = new JPanel(new GridLayout(1, 2, 10, 10));
             JButton backButton = new JButton("Back");
             backButton.addActionListener(e -> goBack());
-            JButton nextButton = new JButton("Next");
-            nextButton.addActionListener(e -> goNext());
-
+            JButton confirmButton = new JButton("Confirm");
+            confirmButton.addActionListener(e -> confirm());
             // add buttons to panel
-            panel3.add(backButton);
-            panel3.add(nextButton);
+            panel.add(backButton);
+            panel.add(confirmButton);
             // Add panel to frame
-            add(panel1);
-            add(panel2);
-            add(panel3);
+            add(panel);
         }
 
         private void goBack() {
@@ -125,7 +119,7 @@ public class GameConfiguration {
             this.dispose();
         }
 
-        private void goNext() {
+        private void confirm() {
             try {
                 rules.nPlayers = Integer.parseInt(playersField.getText());
                 rules.nRows = Integer.parseInt(rowsField.getText());
@@ -186,9 +180,9 @@ public class GameConfiguration {
     }
 
     public void startGame() {
-
+        //new Game(rules);
     }
-
+/*
     private class PrimaryRulesFrame extends JFrame {
         // Primary fields for configuration
         private final JTextField playersField;
@@ -389,5 +383,5 @@ public class GameConfiguration {
             this.dispose();
         }
     }
-
+*/
 }

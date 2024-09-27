@@ -321,7 +321,7 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
                 "Confirm Exit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
         );
         if (result == JOptionPane.YES_OPTION) {
-            new GameConfiguration(null);
+            new ConfigurationCareTaker();
             this.dispose();
         }
     } // goes back to main menu

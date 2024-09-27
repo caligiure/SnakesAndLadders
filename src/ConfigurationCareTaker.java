@@ -6,12 +6,14 @@ public class ConfigurationCareTaker {
     private GameConfiguration gameConfiguration;
 
     public ConfigurationCareTaker() {
-        InitialFrame init = new InitialFrame();
+        InitialFrame init = new InitialFrame(this);
         init.setVisible(true);
     }
 
     private class InitialFrame extends AbsFrame {
-        public InitialFrame() {
+        private final ConfigurationCareTaker careTaker;
+
+        public InitialFrame(ConfigurationCareTaker careTaker) {
             JPanel panel = new JPanel(new GridLayout(3, 1, 10, 10));
             // Set buttons
             JButton setButton = new JButton("Start a new configuration");
@@ -25,10 +27,11 @@ public class ConfigurationCareTaker {
             panel.add(loadButton);
             panel.add(exitButton);
             add(panel);
+            this.careTaker = careTaker;
         }
 
         private void newConfig() {
-            gameConfiguration = new GameConfiguration(null, this);
+            gameConfiguration = new GameConfiguration(null, careTaker);
             this.dispose();
         }
 
@@ -39,7 +42,7 @@ public class ConfigurationCareTaker {
                 try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file))) {
                     Rules rules = (Rules) inputStream.readObject();
                     JOptionPane.showMessageDialog(this, "Configuration loaded successfully.", "Configuration loaded", JOptionPane.INFORMATION_MESSAGE);
-                    gameConfiguration = new GameConfiguration(rules, this);
+                    gameConfiguration = new GameConfiguration(rules, careTaker);
                     this.dispose(); // dispose later da controllare
                 } catch (ClassNotFoundException | IOException ex) {
                     JOptionPane.showMessageDialog(this, "Error loading file.", "Error", JOptionPane.ERROR_MESSAGE);

@@ -211,7 +211,7 @@ abstract class GameManager implements ActionListener {
             new Game(primaryRules, specialRules);  // reset this game with the same configuration
             gameFrame.dispose();
         } else {
-            new GameConfiguration(null); // goes back to main menu
+            new ConfigurationCareTaker(); // goes back to main menu
             gameFrame.dispose();
         }
     } // ends the game if a player reaches the last cells
