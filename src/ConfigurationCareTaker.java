@@ -86,7 +86,7 @@ public class ConfigurationCareTaker {
                             gameConfiguration.startGame();
                             this.dispose();
                         } catch (IOException ex) {
-                            JOptionPane.showMessageDialog(this, "The configuration couldn't be saved.", "Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(this, "The configuration couldn't be saved: "+ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                 } else {
@@ -94,6 +94,8 @@ public class ConfigurationCareTaker {
                     this.dispose();
                 }
             });
+            panel.add(startButton);
+            add(panel);
         }
     }
 }

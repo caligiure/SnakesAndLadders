@@ -1,3 +1,3 @@
 import java.io.Serializable;
 
-public interface Rules extends Serializable {}
+public abstract class Rules implements Serializable {}

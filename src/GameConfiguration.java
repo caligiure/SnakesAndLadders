@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.io.Serializable;
 
 public class GameConfiguration {
     private final ConcRules rules;
@@ -157,7 +158,7 @@ public class GameConfiguration {
         }
     }
 
-    private class ConcRules implements Rules {
+    private static class ConcRules extends Rules {
         int nPlayers = 2;
         int nRows = 10;
         int nCols = 10;
