@@ -3,83 +3,48 @@ import java.awt.*;
 import java.io.*;
 
 public class GameConfiguration {
-    // Since the Special Rules depend on the values of the Primary Rules,
-    // the user must first set the Primary Rules
-    // Example: The "singleDice" special rule can't be enabled
-    // unless the "nDice" primary rule is set on a number greater than 1
-    private PrimaryRulesRecord primaryRules;
-    private SpecialRulesRecord specialRules;
+    private AbsRules primaryRules;
 
     private final JFrame configFrame;
-    private JFrame primaryRulesFrame;
 
-    public GameConfiguration() {
+    public GameConfiguration(Rules rules) {
         configFrame = new ConfigFrame();
         configFrame.setVisible(true);
     }
 
-    private class ConfigFrame extends JFrame {
+    private class ConfigFrame extends AbsFrame {
+        // Fields for configuration
+        private final JTextField playersField;
+        private final JTextField rowsField;
+        private final JTextField columnsField;
+        private final JTextField laddersField;
+        private final JTextField snakesField;
+        private final JComboBox<String> diceComboBox;
+
         public ConfigFrame() {
-            // Set the JFrame
-            setTitle("Snakes And Ladders");
-            setSize(300, 300);
-            setLocationRelativeTo(null); // sets the location of this frame at the center of the screen
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setLayout(new BorderLayout());
-            // Buttons panel
-            JPanel panel = new JPanel(new GridLayout(3, 1, 10, 10));
-            // Set buttons
-            JButton setButton = new JButton("Start a new configuration");
-            setButton.addActionListener(e -> newConfig()); // Add action listener to button
-            JButton loadButton = new JButton("Load a configuration");
-            loadButton.addActionListener(e -> loadConfig());
-            JButton exitButton = new JButton("Exit");
-            exitButton.addActionListener(e -> exitGame());
-            // Add buttons to panel
-            panel.add(setButton);
-            panel.add(loadButton);
-            panel.add(exitButton);
-            add(panel);
+            setTitle("Configure the rules of the game");
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
+            // Fields panel
+            JPanel panel = new JPanel(new GridLayout(7, 2, 10, 10));
+            // Primary fields
+            playersField = new JTextField(""+primaryRules.nPlayers());
+            rowsField = new JTextField(""+primaryRules.nRows());
+            columnsField = new JTextField(""+primaryRules.nCols());
+            laddersField = new JTextField(""+primaryRules.nLadders());
+            snakesField = new JTextField(""+primaryRules.nSnakes());
+            diceComboBox = new JComboBox<>(new String[] {"1", "2"});
+            diceComboBox.setSelectedIndex(primaryRules.nDice() - 1);
+            JButton nextButton = new JButton("Next");
+            nextButton.addActionListener(e -> nextFrame());
+            JButton backButton = new JButton("Back");
+            backButton.addActionListener(e -> previousFrame());
+            // Add fields to panel
         }
 
-        private void newConfig() {
-            // default values
-            primaryRules = new PrimaryRulesRecord(2, 10, 10, 2, 7, 7);
-            specialRules = new SpecialRulesRecord(false, true, true, false, false, false, false,false);
-            primaryRulesFrame = new PrimaryRulesFrame();
-            primaryRulesFrame.setVisible(true);
-            this.setVisible(false); // dispose later
-        }
+    }
 
-        private void loadConfig() {
-            JFileChooser fileChooser = new JFileChooser();
-            if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-                File file = fileChooser.getSelectedFile();
-                try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file))) {
-                    // Load the records from the file
-                    PrimaryRulesRecord pR = (PrimaryRulesRecord) inputStream.readObject();
-                    SpecialRulesRecord sR = (SpecialRulesRecord) inputStream.readObject();
-                    primaryRules = pR;
-                    specialRules = sR;
-                    JOptionPane.showMessageDialog(this, "Configuration loaded successfully.", "Configuration loaded", JOptionPane.INFORMATION_MESSAGE);
-                    primaryRulesFrame = new PrimaryRulesFrame();
-                    primaryRulesFrame.setVisible(true);
-                    this.setVisible(false); // dispose later
-                } catch (ClassNotFoundException | IOException ex) {
-                    JOptionPane.showMessageDialog(this, "Error loading file.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        }
+    private class ConcRules implements Rules {
 
-        private void exitGame() {
-            int result = JOptionPane.showConfirmDialog(
-                    this, "Are you sure you want to exit?",
-                    "Confirm Exit", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
-            );
-            if (result == JOptionPane.YES_OPTION) {
-                this.dispose();
-            }
-        }
     }
 
     private class PrimaryRulesFrame extends JFrame {
@@ -92,12 +57,6 @@ public class GameConfiguration {
         private final JComboBox<String> diceComboBox;
 
         public PrimaryRulesFrame() {
-            // Set the JFrame
-            setTitle("Configure the Primary Rules");
-            setSize(600, 600);
-            setLocationRelativeTo(null); // sets the location of this frame at the center of the screen
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            setLayout(new BorderLayout());
             // Fields panel
             JPanel panel = new JPanel(new GridLayout(7, 2, 10, 10));
             // Primary fields
