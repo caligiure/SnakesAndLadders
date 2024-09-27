@@ -4,14 +4,14 @@ import java.io.*;
 
 public class GameConfiguration {
     private ConcRules rules;
-    private AbsFrame previousFrame;
+    private ConfigurationCareTaker careTaker;
 
-    public GameConfiguration(Rules r, AbsFrame previousFrame) {
+    public GameConfiguration(Rules r, ConfigurationCareTaker careTaker) {
         if(r == null)
             rules = new ConcRules();
         else
             rules = (ConcRules) r;
-        this.previousFrame = previousFrame;
+        this.careTaker = careTaker;
         AbsFrame configFrame = new ConfigFrame();
         configFrame.setVisible(true);
     }
@@ -121,53 +121,46 @@ public class GameConfiguration {
         }
 
         private void goBack() {
-            previousFrame.setVisible(true);
+            new ConfigurationCareTaker();
             this.dispose();
         }
 
         private void goNext() {
             try {
-                int numPlayers = Integer.parseInt(playersField.getText());
-                int numRows = Integer.parseInt(rowsField.getText());
-                int numCols = Integer.parseInt(columnsField.getText());
-                int numLadders = Integer.parseInt(laddersField.getText());
-                int numSnakes = Integer.parseInt(snakesField.getText());
-                int numDice = diceComboBox.getSelectedIndex() + 1;
-                if (numDice < 1)
-                    numDice = 1;
-                if (numPlayers <= 0)
+                rules.nPlayers = Integer.parseInt(playersField.getText());
+                rules.nRows = Integer.parseInt(rowsField.getText());
+                rules.nCols = Integer.parseInt(columnsField.getText());
+                rules.nLadders = Integer.parseInt(laddersField.getText());
+                rules.nSnakes = Integer.parseInt(snakesField.getText());
+                rules.nDice = diceComboBox.getSelectedIndex() + 1;
+                if (rules.nDice < 1)
+                    rules.nDice = 1;
+                if (rules.nPlayers <= 0)
                     JOptionPane.showMessageDialog(this, "The number of players cannot be 0.",
                             "Invalid Number of Players", JOptionPane.ERROR_MESSAGE);
-                else if (numRows < 3 || numCols < 3)
+                else if (rules.nRows < 3 || rules.nCols < 3)
                     JOptionPane.showMessageDialog(this, "Rows and Columns values must be at least 3.",
                             "Invalid Rows and Columns", JOptionPane.ERROR_MESSAGE);
-                else if ( (numLadders + numSnakes) > ((numCols-2) * (numRows/2)) )
+                else if ( (rules.nLadders + rules.nSnakes) > ((rules.nCols-2) * (rules.nRows/2)) )
                     JOptionPane.showMessageDialog(this,
-                            "A "+numRows+"x"+numCols+" board can contain a maximum of "+( (numCols-2) * (numRows/2) )+" elements, summing both snakes and ladders",
+                            "A "+rules.nRows+"x"+rules.nCols+" board can contain a maximum of "+( (rules.nCols-2) * (rules.nRows/2) )+" elements, summing both snakes and ladders",
                             "Too many snakes and ladders", JOptionPane.ERROR_MESSAGE);
                 else {
-                    // Save the values in the rules record
-                    PrimaryRulesRecord primaryRules = new PrimaryRulesRecord(numPlayers, numRows, numCols, numDice, numLadders, numSnakes);
-                    SpecialRulesRecord specialRules = new SpecialRulesRecord(
-                            autoAdvanceCheckBox.isSelected(),
-                            singleDieCheckBox.isSelected(),
-                            doubleSixCheckBox.isSelected(),
-                            stopTilesCheckBox.isSelected(),
-                            moveAgainCheckBox.isSelected(),
-                            rollAgainCheckBox.isSelected(),
-                            addCardsCheckBox.isSelected(),
-                            denyStopCardCheckBox.isSelected()
-                    );
-                    this.setVisible(false);
-                    new Game(primaryRules, specialRules); // creates the board
-                    previousFrame.dispose();
+                    rules.autoAdvance=autoAdvanceCheckBox.isSelected();
+                    rules.singleDice=singleDieCheckBox.isSelected();
+                    rules.doubleSix=doubleSixCheckBox.isSelected();
+                    rules.stopTiles=stopTilesCheckBox.isSelected();
+                    rules.moveAgainTiles=moveAgainCheckBox.isSelected();
+                    rules.rollAgainTiles=rollAgainCheckBox.isSelected();
+                    rules.addCards=addCardsCheckBox.isSelected();
+                    rules.denyStopCard=denyStopCardCheckBox.isSelected();
                     this.dispose();
+                    careTaker.configurationDone();
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "The typed values aren't valid numbers.", "Values Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-
     }
 
     private class ConcRules implements Rules {
@@ -186,6 +179,14 @@ public class GameConfiguration {
         boolean rollAgainTiles = false;
         boolean addCards = false;
         boolean denyStopCard = false;
+    }
+
+    public Rules getRules() {
+        return rules;
+    }
+
+    public void startGame() {
+
     }
 
     private class PrimaryRulesFrame extends JFrame {
