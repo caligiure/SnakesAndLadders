@@ -31,7 +31,8 @@ public class ConfigurationCareTaker {
         }
 
         private void newConfig() {
-            gameConfiguration = new GameConfiguration(null, careTaker);
+            gameConfiguration = new GameConfiguration(careTaker);
+            gameConfiguration.setRules(null);
             this.dispose();
         }
 
@@ -42,8 +43,9 @@ public class ConfigurationCareTaker {
                 try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(file))) {
                     Rules rules = (Rules) inputStream.readObject();
                     JOptionPane.showMessageDialog(this, "Configuration loaded successfully.", "Configuration loaded", JOptionPane.INFORMATION_MESSAGE);
-                    gameConfiguration = new GameConfiguration(rules, careTaker);
-                    this.dispose(); // dispose later da controllare
+                    gameConfiguration = new GameConfiguration(careTaker);
+                    gameConfiguration.setRules(rules);
+                    this.dispose();
                 } catch (ClassNotFoundException | IOException ex) {
                     JOptionPane.showMessageDialog(this, "Error loading file.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
@@ -86,7 +88,7 @@ public class ConfigurationCareTaker {
                             gameConfiguration.startGame();
                             this.dispose();
                         } catch (IOException ex) {
-                            JOptionPane.showMessageDialog(this, "The configuration couldn't be saved: "+ex.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(this, "The configuration couldn't be saved: "+ex, "Error", JOptionPane.ERROR_MESSAGE);
                         }
                     }
                 } else {

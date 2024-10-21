@@ -9,8 +9,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Working on ConfigurationSummary">
+    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Memento works">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ConfigurationCareTaker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ConfigurationCareTaker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GameConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameConfiguration.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -141,15 +143,11 @@
       <workItem from="1725873594497" duration="1396000" />
       <workItem from="1726730687880" duration="1483000" />
       <workItem from="1726835835104" duration="2123000" />
-      <workItem from="1727437524800" duration="23516000" />
-    </task>
-    <task id="LOCAL-00001" summary="The board gridLayout is working!">
-      <option name="closed" value="true" />
-      <created>1722702835227</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1722702835227</updated>
+      <workItem from="1727437524800" duration="23863000" />
+      <workItem from="1727476558027" duration="9000" />
+      <workItem from="1728298791992" duration="5897000" />
+      <workItem from="1728575905814" duration="755000" />
+      <workItem from="1729243342328" duration="3809000" />
     </task>
     <task id="LOCAL-00002" summary="The board gridLayout is working">
       <option name="closed" value="true" />
@@ -535,7 +533,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727475904181</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="Memento works">
+      <option name="closed" value="true" />
+      <created>1727476472148</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1727476472148</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -554,7 +560,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Adding snakes and ladders" />
     <MESSAGE value="Checkpoint before changing the system for storing snakes and ladders" />
     <MESSAGE value="System for snakes and ladders done, starting to work on visualizing them" />
     <MESSAGE value="Working on visualizing snakes and ladders" />
@@ -579,7 +584,8 @@
     <MESSAGE value="Working on pattern memento" />
     <MESSAGE value="Pattern Memento almost done" />
     <MESSAGE value="Working on ConfigurationSummary" />
-    <option name="LAST_COMMIT_MESSAGE" value="Working on ConfigurationSummary" />
+    <MESSAGE value="Memento works" />
+    <option name="LAST_COMMIT_MESSAGE" value="Memento works" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
