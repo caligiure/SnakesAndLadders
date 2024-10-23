@@ -75,7 +75,7 @@ public class ConfigurationCareTaker {
             startButton.addActionListener(e -> {
                 int result = JOptionPane.showConfirmDialog(
                         this, "Do you want to save this game configuration before starting?",
-                        "Save Game Configuration", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
+                        "Save Game.Game Configuration", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
                 );
                 if (result == JOptionPane.YES_OPTION) {
                     Rules rules = gameConfiguration.getRules();

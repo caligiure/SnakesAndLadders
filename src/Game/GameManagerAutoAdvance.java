@@ -1,3 +1,5 @@
+package Game;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.concurrent.TimeUnit;

@@ -1,3 +1,5 @@
+package Game;
+
 import java.awt.event.ActionEvent;
 
 class GameManagerManualAdvance extends GameManager {

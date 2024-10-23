@@ -1,10 +1,12 @@
+package Game;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.Random;
 
-class GameFrame extends JFrame { // GameFrame contains all the graphic elements of the game
+class GameFrame extends JFrame { // Game.GameFrame contains all the graphic elements of the game
     private final PrimaryRulesRecord primaryRules;
     private final SpecialRulesRecord specialRules;
     private final String[] playersName; // used in playersTable
@@ -351,7 +353,7 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
             data[i][1] = playersName[i];
             data[i][2] = 1;
         }
-        // Game Log shows ID, name and position of every player
+        // Game.Game Log shows ID, name and position of every player
         playersTable = new DefaultTableModel(data, columnNames);
         JTable table = new JTable(playersTable); // contains the default table model
         table.setDefaultEditor(Object.class, null);
@@ -382,37 +384,37 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
 
     public String getPlayerTag(int player) {
         return playersTag[player];
-    } // used in GameManager, returns the tag of the specified player
+    } // used in Game.GameManager, returns the tag of the specified player
 
     public JLabel getCellLabel(int i) {
         int[] cord = findCoordinates(i, primaryRules.nRows(), primaryRules.nCols());
         return cells[cord[0]][cord[1]];
-    } // used in GameManager.updatePlayerPosition, returns the label of a cell, given its index
+    } // used in Game.GameManager.updatePlayerPosition, returns the label of a cell, given its index
 
     public Content getcellContent(int[] coords) {
         return cellsContent[coords[0]][coords[1]];
-    } // used in GameManager.checkTile, returns the content of the given cell
+    } // used in Game.GameManager.checkTile, returns the content of the given cell
 
     public void appendGameLog(String log) {
         gameLog.append(log);
-    } // used in GameManager, appends the specified log String to the gameLog
+    } // used in Game.GameManager, appends the specified log String to the gameLog
 
     public void setPositionOnPlayersTable(int newPosition, int currentPlayer) {
         playersTable.setValueAt(newPosition, currentPlayer, 2);
-    } // used in GameManager.movePlayer, sets the new position on the players table
+    } // used in Game.GameManager.movePlayer, sets the new position on the players table
 
     public int checkLadder(int position) {
         for(int[] ladder : ladders)
             if (ladder[0] == position)
                 return ladder[1];
         return -1;
-    } // used in GameManager.checkTile, checks if the specified position contains a ladder bottom and returns the position of the top of the ladder
+    } // used in Game.GameManager.checkTile, checks if the specified position contains a ladder bottom and returns the position of the top of the ladder
 
     public int checkSnake(int position) {
         for(int[] snake : snakes)
             if (snake[0] == position)
                 return snake[1];
         return -1;
-    } // used in GameManager.checkTile, checks if the specified position contains a snake head and returns the position of the tail of the snake
+    } // used in Game.GameManager.checkTile, checks if the specified position contains a snake head and returns the position of the tail of the snake
 
-} // GameFrame contains all the graphic elements of the game
+} // Game.GameFrame contains all the graphic elements of the game

@@ -4,13 +4,9 @@ import java.awt.*;
 public class GameConfiguration {
     private ConcRules rules;
     private final ConfigurationCareTaker careTaker;
-    private final RulesBuilder rulesBuilder;
-    private final RulesDirector rulesDirector;
 
     public GameConfiguration(ConfigurationCareTaker careTaker) {
         this.careTaker = careTaker;
-        rulesBuilder = new rulesBuilder();
-        rulesDirector = new RulesDirector(rulesBuilder);
     }
 
     private class ConfigFrame extends AbsFrame {
@@ -187,7 +183,7 @@ public class GameConfiguration {
     }
 
     public void startGame() {
-        //new Game(rules);
+        //new Game.Game(rules);
     }
 
 }
