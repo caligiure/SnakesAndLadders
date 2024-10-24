@@ -183,7 +183,7 @@ public class GameConfiguration {
     }
 
     public void startGame() {
-        //new Game.Game(rules);
+        //new Game(rules);
     }
 
 }

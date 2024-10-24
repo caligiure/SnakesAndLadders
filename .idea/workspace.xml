@@ -9,10 +9,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Working on Memento">
+    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Refactored game classes in &quot;game&quot; package">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ConfigurationCareTaker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ConfigurationCareTaker.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Game/Content.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Content.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Game/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Game.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Game/GameFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Game/GameManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Game/GameManagerAutoAdvance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameManagerAutoAdvance.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Game/GameManagerManualAdvance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameManagerManualAdvance.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Game/PrimaryRulesRecord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PrimaryRulesRecord.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Game/RulesBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/RulesBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Game/SpecialRulesRecord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SpecialRulesRecord.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GameConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,11 +32,13 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="Interface" />
       </list>
     </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
   &quot;lastFilter&quot;: {
@@ -82,6 +93,10 @@
   <component name="RecentsManager">
     <key name="MoveInnerDialog.RECENTS_KEY">
       <recent name="" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
+      <recent name="Game" />
     </key>
   </component>
   <component name="RunManager">
@@ -148,31 +163,8 @@
       <workItem from="1728298791992" duration="5897000" />
       <workItem from="1728575905814" duration="755000" />
       <workItem from="1729243342328" duration="4789000" />
-      <workItem from="1729696104445" duration="3528000" />
-    </task>
-    <task id="LOCAL-00003" summary="work in progress on &quot;StartGame&quot;">
-      <option name="closed" value="true" />
-      <created>1722711528965</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1722711528965</updated>
-    </task>
-    <task id="LOCAL-00004" summary="work in progress on &quot;ConfigGame&quot;">
-      <option name="closed" value="true" />
-      <created>1722883172370</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1722883172370</updated>
-    </task>
-    <task id="LOCAL-00005" summary="First and Second configuration Frames done">
-      <option name="closed" value="true" />
-      <created>1724686770471</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1724686770471</updated>
+      <workItem from="1729696104445" duration="4137000" />
+      <workItem from="1729751245763" duration="3298000" />
     </task>
     <task id="LOCAL-00006" summary="Work in progress in configGame">
       <option name="closed" value="true" />
@@ -542,7 +534,31 @@
       <option name="project" value="LOCAL" />
       <updated>1729506407800</updated>
     </task>
-    <option name="localTasksCounter" value="52" />
+    <task id="LOCAL-00052" summary="Working on RulesBuilder">
+      <option name="closed" value="true" />
+      <created>1729706940945</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1729706940946</updated>
+    </task>
+    <task id="LOCAL-00053" summary="Refactored game classes in &quot;game&quot; package">
+      <option name="closed" value="true" />
+      <created>1729707525972</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1729707525972</updated>
+    </task>
+    <task id="LOCAL-00054" summary="Refactored game classes in &quot;game&quot; package">
+      <option name="closed" value="true" />
+      <created>1729751325254</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1729751325255</updated>
+    </task>
+    <option name="localTasksCounter" value="55" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -561,8 +577,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="System for snakes and ladders done, starting to work on visualizing them" />
-    <MESSAGE value="Working on visualizing snakes and ladders" />
     <MESSAGE value="Still working on visualizing snakes and ladders" />
     <MESSAGE value="Visualization of snakes and ladders finally works" />
     <MESSAGE value="Improved visualization of snakes and ladders" />
@@ -586,7 +600,9 @@
     <MESSAGE value="Working on ConfigurationSummary" />
     <MESSAGE value="Memento works" />
     <MESSAGE value="Working on Memento" />
-    <option name="LAST_COMMIT_MESSAGE" value="Working on Memento" />
+    <MESSAGE value="Working on RulesBuilder" />
+    <MESSAGE value="Refactored game classes in &quot;game&quot; package" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactored game classes in &quot;game&quot; package" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -1,5 +1,3 @@
-package Game;
-
 import java.io.Serializable;
 
 public record SpecialRulesRecord(
