@@ -184,8 +184,9 @@ public class GameConfiguration {
     }
 
     public void startGame() {
-
-        //new Game(rules);
+        PrimaryRulesRecord pr = new PrimaryRulesRecord(fields.nPlayers, fields.nRows, fields.nCols, fields.nDice, fields.nLadders, fields.nSnakes);
+        SecondaryRulesRecord sr = new SecondaryRulesRecord(fields.autoAdvance, fields.singleDice, fields.doubleSix, fields.stopTiles, fields.moveAgainTiles, fields.rollAgainTiles, fields.addCards, fields.denyStopCard);
+        new Game(pr, sr);
     }
 
 }
