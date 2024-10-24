@@ -5,14 +5,14 @@ import java.util.Random;
 
 abstract class GameManager implements ActionListener {
     private final PrimaryRulesRecord primaryRules;
-    private final SpecialRulesRecord specialRules;
+    private final SecondaryRulesRecord specialRules;
     private final GameFrame gameFrame;
     int nextPlayer = 0; // indicates the number of the player who must roll the dices
     private final int[] playersPosition;
     private final LinkedList<Integer> stoppedPlayers = new LinkedList<>();
     private final LinkedList<Integer> hasDenyStopPlayers = new LinkedList<>();
 
-    public GameManager(PrimaryRulesRecord primaryRules, SpecialRulesRecord specialRules, GameFrame gameFrame) {
+    public GameManager(PrimaryRulesRecord primaryRules, SecondaryRulesRecord specialRules, GameFrame gameFrame) {
         this.primaryRules = primaryRules;
         this.specialRules = specialRules;
         this.gameFrame = gameFrame;

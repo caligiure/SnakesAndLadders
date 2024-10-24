@@ -2,7 +2,7 @@ import java.awt.event.ActionEvent;
 
 class GameManagerManualAdvance extends GameManager {
 
-    public GameManagerManualAdvance(PrimaryRulesRecord primaryRules, SpecialRulesRecord specialRules, GameFrame gameFrame) {
+    public GameManagerManualAdvance(PrimaryRulesRecord primaryRules, SecondaryRulesRecord specialRules, GameFrame gameFrame) {
         super(primaryRules, specialRules, gameFrame);
     }
 

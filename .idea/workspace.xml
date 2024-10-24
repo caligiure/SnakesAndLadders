@@ -9,19 +9,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Refactored game classes in &quot;game&quot; package">
+    <list default="true" id="9b55d8d9-f72e-411e-812e-35108a2d1739" name="Changes" comment="Refactor">
+      <change afterPath="$PROJECT_DIR$/src/MutableFields.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/RulesConc.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/RulesConcBuilder.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/RulesDirector.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ConfigurationCareTaker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ConfigurationCareTaker.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Game/Content.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Content.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Game/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Game.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Game/GameFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Game/GameManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Game/GameManagerAutoAdvance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameManagerAutoAdvance.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Game/GameManagerManualAdvance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameManagerManualAdvance.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Game/PrimaryRulesRecord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/PrimaryRulesRecord.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Game/RulesBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/RulesBuilder.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Game/SpecialRulesRecord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SpecialRulesRecord.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Game.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Game.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/GameConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GameFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameFrame.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GameManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GameManagerAutoAdvance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameManagerAutoAdvance.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/GameManagerManualAdvance.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/GameManagerManualAdvance.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/RulesBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/RulesBuilder.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/SpecialRulesRecord.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/SecondaryRulesRecord.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,8 +33,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -164,15 +166,7 @@
       <workItem from="1728575905814" duration="755000" />
       <workItem from="1729243342328" duration="4789000" />
       <workItem from="1729696104445" duration="4137000" />
-      <workItem from="1729751245763" duration="3298000" />
-    </task>
-    <task id="LOCAL-00006" summary="Work in progress in configGame">
-      <option name="closed" value="true" />
-      <created>1724707006581</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1724707006581</updated>
+      <workItem from="1729751245763" duration="7349000" />
     </task>
     <task id="LOCAL-00007" summary="The class GameConfiguration is complete">
       <option name="closed" value="true" />
@@ -558,7 +552,15 @@
       <option name="project" value="LOCAL" />
       <updated>1729751325255</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="Refactor">
+      <option name="closed" value="true" />
+      <created>1729782067283</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1729782067283</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -577,7 +579,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
-    <MESSAGE value="Still working on visualizing snakes and ladders" />
     <MESSAGE value="Visualization of snakes and ladders finally works" />
     <MESSAGE value="Improved visualization of snakes and ladders" />
     <MESSAGE value="Adding special cells" />
@@ -602,7 +603,8 @@
     <MESSAGE value="Working on Memento" />
     <MESSAGE value="Working on RulesBuilder" />
     <MESSAGE value="Refactored game classes in &quot;game&quot; package" />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactored game classes in &quot;game&quot; package" />
+    <MESSAGE value="Refactor" />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class GameConfiguration {
-    private ConcRules rules;
+    private MutableFields fields;
     private final ConfigurationCareTaker careTaker;
 
     public GameConfiguration(ConfigurationCareTaker careTaker) {
@@ -31,13 +31,13 @@ public class GameConfiguration {
             setExtendedState(JFrame.MAXIMIZED_BOTH);
             // Primary fields
             JPanel panel = new JPanel(new GridLayout(11, 2, 10, 10));
-            playersField = new JTextField(""+ rules.nPlayers);
-            rowsField = new JTextField(""+ rules.nRows);
-            columnsField = new JTextField(""+ rules.nCols);
-            laddersField = new JTextField(""+ rules.nLadders);
-            snakesField = new JTextField(""+ rules.nSnakes);
+            playersField = new JTextField(""+ fields.nPlayers);
+            rowsField = new JTextField(""+ fields.nRows);
+            columnsField = new JTextField(""+ fields.nCols);
+            laddersField = new JTextField(""+ fields.nLadders);
+            snakesField = new JTextField(""+ fields.nSnakes);
             diceComboBox = new JComboBox<>(new String[] {"1", "2"});
-            diceComboBox.setSelectedIndex(rules.nDice - 1);
+            diceComboBox.setSelectedIndex(fields.nDice - 1);
             // Add fields to panel
             panel.add(new JLabel("Number of players:"));
             panel.add(playersField);
@@ -52,15 +52,15 @@ public class GameConfiguration {
             panel.add(new JLabel("Number of dice:"));
             panel.add(diceComboBox);
             // Secondary fields
-            autoAdvanceCheckBox = new JCheckBox("Automatically roll the dice and advance", rules.autoAdvance);
-            singleDieCheckBox = new JCheckBox("Use a single die in the last 6 tiles, to reduce the risk of overshooting", rules.singleDice);
-            doubleSixCheckBox = new JCheckBox("If you got double six, you can roll the dice a second time and move again before ending your turn", rules.doubleSix);
-            stopTilesCheckBox = new JCheckBox("Add stop tiles: bench stops you for 1 turn, tavern stops you for 3 turns", rules.stopTiles);
-            moveAgainCheckBox = new JCheckBox("Add 'move again' tiles that let you move again without rolling the dice", rules.moveAgainTiles);
-            rollAgainCheckBox = new JCheckBox("Add 'roll again' tiles that let you roll the dice a second time and move again", rules.rollAgainTiles);
-            addCardsCheckBox = new JCheckBox("Add special tiles that let you draw a card", rules.addCards);
-            denyStopCardCheckBox = new JCheckBox("Add a 'deny stop' card that you can use to avoid getting stopped", rules.denyStopCard);
-            if(rules.nDice < 2) {
+            autoAdvanceCheckBox = new JCheckBox("Automatically roll the dice and advance", fields.autoAdvance);
+            singleDieCheckBox = new JCheckBox("Use a single die in the last 6 tiles, to reduce the risk of overshooting", fields.singleDice);
+            doubleSixCheckBox = new JCheckBox("If you got double six, you can roll the dice a second time and move again before ending your turn", fields.doubleSix);
+            stopTilesCheckBox = new JCheckBox("Add stop tiles: bench stops you for 1 turn, tavern stops you for 3 turns", fields.stopTiles);
+            moveAgainCheckBox = new JCheckBox("Add 'move again' tiles that let you move again without rolling the dice", fields.moveAgainTiles);
+            rollAgainCheckBox = new JCheckBox("Add 'roll again' tiles that let you roll the dice a second time and move again", fields.rollAgainTiles);
+            addCardsCheckBox = new JCheckBox("Add special tiles that let you draw a card", fields.addCards);
+            denyStopCardCheckBox = new JCheckBox("Add a 'deny stop' card that you can use to avoid getting stopped", fields.denyStopCard);
+            if(fields.nDice < 2) {
                 singleDieCheckBox.setEnabled(false);
                 singleDieCheckBox.setSelected(false);
                 doubleSixCheckBox.setEnabled(false);
@@ -115,35 +115,35 @@ public class GameConfiguration {
 
         private void confirm() {
             try {
-                rules.nPlayers = Integer.parseInt(playersField.getText());
-                rules.nRows = Integer.parseInt(rowsField.getText());
-                rules.nCols = Integer.parseInt(columnsField.getText());
-                rules.nLadders = Integer.parseInt(laddersField.getText());
-                rules.nSnakes = Integer.parseInt(snakesField.getText());
-                rules.nDice = diceComboBox.getSelectedIndex() + 1;
-                if (rules.nDice < 1)
-                    rules.nDice = 1;
-                if (rules.nPlayers <= 0)
+                fields.nPlayers = Integer.parseInt(playersField.getText());
+                fields.nRows = Integer.parseInt(rowsField.getText());
+                fields.nCols = Integer.parseInt(columnsField.getText());
+                fields.nLadders = Integer.parseInt(laddersField.getText());
+                fields.nSnakes = Integer.parseInt(snakesField.getText());
+                fields.nDice = diceComboBox.getSelectedIndex() + 1;
+                if (fields.nDice < 1)
+                    fields.nDice = 1;
+                if (fields.nPlayers <= 0)
                     JOptionPane.showMessageDialog(this, "The number of players cannot be 0.",
                             "Invalid Number of Players", JOptionPane.ERROR_MESSAGE);
-                else if (rules.nRows < 3 || rules.nCols < 3)
+                else if (fields.nRows < 3 || fields.nCols < 3)
                     JOptionPane.showMessageDialog(this, "Rows and Columns values must be at least 3.",
                             "Invalid Rows and Columns", JOptionPane.ERROR_MESSAGE);
-                else if ( (rules.nLadders + rules.nSnakes) > ((rules.nCols-2) * (rules.nRows/2)) )
+                else if ( (fields.nLadders + fields.nSnakes) > ((fields.nCols-2) * (fields.nRows/2)) )
                     JOptionPane.showMessageDialog(this,
-                            "A "+rules.nRows+"x"+rules.nCols+" board can contain a maximum of "+( (rules.nCols-2) * (rules.nRows/2) )+" elements, summing both snakes and ladders",
+                            "A "+ fields.nRows+"x"+ fields.nCols+" board can contain a maximum of "+( (fields.nCols-2) * (fields.nRows/2) )+" elements, summing both snakes and ladders",
                             "Too many snakes and ladders", JOptionPane.ERROR_MESSAGE);
                 else {
-                    rules.autoAdvance=autoAdvanceCheckBox.isSelected();
-                    rules.singleDice=singleDieCheckBox.isSelected();
-                    rules.doubleSix=doubleSixCheckBox.isSelected();
-                    rules.stopTiles=stopTilesCheckBox.isSelected();
-                    rules.moveAgainTiles=moveAgainCheckBox.isSelected();
-                    rules.rollAgainTiles=rollAgainCheckBox.isSelected();
-                    rules.addCards=addCardsCheckBox.isSelected();
-                    rules.denyStopCard=denyStopCardCheckBox.isSelected();
-                    this.dispose();
+                    fields.autoAdvance=autoAdvanceCheckBox.isSelected();
+                    fields.singleDice=singleDieCheckBox.isSelected();
+                    fields.doubleSix=doubleSixCheckBox.isSelected();
+                    fields.stopTiles=stopTilesCheckBox.isSelected();
+                    fields.moveAgainTiles=moveAgainCheckBox.isSelected();
+                    fields.rollAgainTiles=rollAgainCheckBox.isSelected();
+                    fields.addCards=addCardsCheckBox.isSelected();
+                    fields.denyStopCard=denyStopCardCheckBox.isSelected();
                     careTaker.configurationDone();
+                    this.dispose();
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(this, "The typed values aren't valid numbers.", "Values Error", JOptionPane.ERROR_MESSAGE);
@@ -151,38 +151,40 @@ public class GameConfiguration {
         }
     }
 
-    private static class ConcRules extends Rules {
-        int nPlayers = 2;
-        int nRows = 10;
-        int nCols = 10;
-        int nDice = 2;
-        int nLadders = 7;
-        int nSnakes = 7;
-
-        boolean autoAdvance = false;
-        boolean singleDice = false;
-        boolean doubleSix = false;
-        boolean stopTiles = false;
-        boolean moveAgainTiles = false;
-        boolean rollAgainTiles = false;
-        boolean addCards = false;
-        boolean denyStopCard = false;
+    public Rules getRulesMemento() {
+        RulesConcBuilder builder = new RulesConcBuilder(fields);
+        RulesDirector director = new RulesDirector(builder);
+        director.construct();
+        return builder.getResult();
     }
 
-    public Rules getRules() {
-        return rules;
-    }
-
-    public void setRules(Rules r) {
+    public void setRulesMemento(Rules r) {
         if(r == null)
-            rules = new ConcRules();
-        else
-            rules = (ConcRules) r;
+            fields = new MutableFields();
+        else {
+            RulesConc rules = (RulesConc) r;
+            fields = new MutableFields();
+            fields.nPlayers=rules.nPlayers;
+            fields.nRows=rules.nRows;
+            fields.nCols=rules.nCols;
+            fields.nLadders=rules.nLadders;
+            fields.nSnakes=rules.nSnakes;
+            fields.nDice=rules.nDice;
+            fields.autoAdvance=rules.autoAdvance;
+            fields.singleDice=rules.singleDice;
+            fields.doubleSix=rules.doubleSix;
+            fields.stopTiles=rules.stopTiles;
+            fields.moveAgainTiles=rules.moveAgainTiles;
+            fields.rollAgainTiles=rules.rollAgainTiles;
+            fields.addCards=rules.addCards;
+            fields.denyStopCard=rules.denyStopCard;
+        }
         AbsFrame configFrame = new ConfigFrame();
         configFrame.setVisible(true);
     }
 
     public void startGame() {
+
         //new Game(rules);
     }
 

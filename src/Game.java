@@ -3,10 +3,10 @@ import java.awt.*;
 
 public class Game {
     private final PrimaryRulesRecord primaryRules;
-    private final SpecialRulesRecord specialRules;
+    private final SecondaryRulesRecord specialRules;
     private final String[] playerName;
 
-    public Game(PrimaryRulesRecord primaryRules, SpecialRulesRecord specialRules) {
+    public Game(PrimaryRulesRecord primaryRules, SecondaryRulesRecord specialRules) {
         this.primaryRules = primaryRules;
         this.specialRules = specialRules;
         playerName = new String[primaryRules.nPlayers()];

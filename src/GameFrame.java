@@ -6,7 +6,7 @@ import java.util.Random;
 
 class GameFrame extends JFrame { // GameFrame contains all the graphic elements of the game
     private final PrimaryRulesRecord primaryRules;
-    private final SpecialRulesRecord specialRules;
+    private final SecondaryRulesRecord specialRules;
     private final String[] playersName; // used in playersTable
     private final String[] playersTag; // used in playersTable
     private DefaultTableModel playersTable;
@@ -18,7 +18,7 @@ class GameFrame extends JFrame { // GameFrame contains all the graphic elements 
     private final Content[][] cellsContent; // the type of content of every cell
     private final JTextArea gameLog = new JTextArea();  // Text area for gameLog
 
-    public GameFrame(PrimaryRulesRecord primaryRules, SpecialRulesRecord specialRules, String[] playersName) {
+    public GameFrame(PrimaryRulesRecord primaryRules, SecondaryRulesRecord specialRules, String[] playersName) {
         this.primaryRules = primaryRules;
         this.specialRules = specialRules;
         this.playersName = playersName;

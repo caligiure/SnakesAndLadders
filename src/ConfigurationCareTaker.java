@@ -32,7 +32,7 @@ public class ConfigurationCareTaker {
 
         private void newConfig() {
             gameConfiguration = new GameConfiguration(careTaker);
-            gameConfiguration.setRules(null);
+            gameConfiguration.setRulesMemento(null);
             this.dispose();
         }
 
@@ -44,7 +44,7 @@ public class ConfigurationCareTaker {
                     Rules rules = (Rules) inputStream.readObject();
                     JOptionPane.showMessageDialog(this, "Configuration loaded successfully.", "Configuration loaded", JOptionPane.INFORMATION_MESSAGE);
                     gameConfiguration = new GameConfiguration(careTaker);
-                    gameConfiguration.setRules(rules);
+                    gameConfiguration.setRulesMemento(rules);
                     this.dispose();
                 } catch (ClassNotFoundException | IOException ex) {
                     JOptionPane.showMessageDialog(this, "Error loading file.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -78,7 +78,7 @@ public class ConfigurationCareTaker {
                         "Save Game Configuration", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
                 );
                 if (result == JOptionPane.YES_OPTION) {
-                    Rules rules = gameConfiguration.getRules();
+                    Rules rules = gameConfiguration.getRulesMemento();
                     JFileChooser fileChooser = new JFileChooser();
                     if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
                         File file = fileChooser.getSelectedFile();

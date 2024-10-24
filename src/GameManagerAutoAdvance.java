@@ -7,7 +7,7 @@ class GameManagerAutoAdvance extends GameManager {
     private final JButton actionButton;
     private final AdvancerThread advancerThread;
 
-    public GameManagerAutoAdvance(PrimaryRulesRecord primaryRules, SpecialRulesRecord specialRules, GameFrame gameFrame) {
+    public GameManagerAutoAdvance(PrimaryRulesRecord primaryRules, SecondaryRulesRecord specialRules, GameFrame gameFrame) {
         super(primaryRules, specialRules, gameFrame);
         actionButton = gameFrame.getActionButton();
         advancerThread = new AdvancerThread();
